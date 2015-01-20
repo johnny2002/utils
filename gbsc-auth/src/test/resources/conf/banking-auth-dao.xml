@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:p="http://cxf.apache.org/policy" xmlns:ss="http://www.springframework.org/schema/security" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+	http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+	http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
+	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+	http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd
+	http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<context:component-scan
+		base-package="com.ibm.gbsc.auth, com.ibm.framework, com.ibm.banking.irmp, com.ibm.riskreport, com.ibm.riskintegration, com.ibm.banking.framework, com.ibm.banking.riskreport, com.ibm.banking.riskintegration">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+	</context:component-scan>
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- <property name="jtaTransactionManager" ref="transactionManager"/> -->
+		<property name="packagesToScan">
+			<list>
+				<value>com.ibm.banking.framework</value>
+				<value>com.ibm.gbsc.auth</value>
+			</list>
+		</property>
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.generate_ddl}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+				<prop key="hibernate.default_batch_fetch_size">${hibernate.default_batch_fetch_size}</prop>
+				<prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
+				<prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
+			</props>
+		</property>
+		<property name="namingStrategy">
+			<bean class="org.hibernate.cfg.ImprovedNamingStrategy" />
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- <context:annotation-config /> -->
+
+	<bean class="com.ibm.banking.framework.util.SpringBeanFactory" init-method="init" />
+
+</beans>
