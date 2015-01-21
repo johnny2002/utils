@@ -13,7 +13,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ibm.gbsc.utils.vo.BaseVO;
+import com.ibm.gbsc.common.vo.BaseVO;
 
 /**
  * 类作用：

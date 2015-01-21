@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 
-import com.ibm.gbsc.utils.vo.BaseVO;
+import com.ibm.gbsc.common.vo.BaseVO;
 
 /**
  * 转换从页面来的String主键，到服务端的java中实体.

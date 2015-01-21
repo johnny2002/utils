@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.ibm.gbsc.utils.vo.PagedQueryParam;
-import com.ibm.gbsc.utils.vo.PagedQueryResult;
+import com.ibm.gbsc.common.vo.PagedQueryParam;
+import com.ibm.gbsc.common.vo.PagedQueryResult;
 
 /**
  * 查询Controller父类.
