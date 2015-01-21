@@ -1,28 +1,21 @@
 package com.ibm.gbsc.auth.user;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ibm.banking.framework.dao.HibernateDao;
-import com.ibm.banking.framework.dto.PagedQueryResult;
 import com.ibm.gbsc.auth.resource.RoleResource;
+import com.ibm.gbsc.common.vo.PagedQueryResult;
 
 /**
  * @author Johnny
@@ -31,46 +24,32 @@ import com.ibm.gbsc.auth.resource.RoleResource;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 	Logger log = LoggerFactory.getLogger(getClass());
-	@Autowired
-	HibernateDao dao;
+	@PersistenceContext
+	EntityManager em;
 
 	/** {@inheritDoc} */
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Role> getAllRoles() {
-		List<Role> roleList = dao.getSession().getNamedQuery("Role.getAll").list();
-		for (Role role : roleList) {
-			Hibernate.initialize(role.getFunctions());
-			List<RoleResource> roleResources = role.getRoleResList();
-			for (RoleResource roleResource : roleResources) {
-				Hibernate.initialize(roleResource.getResource());
-			}
-		}
+		List<Role> roleList = em.createNamedQuery("Role.getAll").getResultList();
 		return roleList;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Role> getAppRoles(Integer appId) {
-		return dao.getSession().getNamedQuery("Role.getByApp").setInteger("appId", appId).list();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public User getUser(String loginId) {
 		log.debug(loginId);
-		User user = (User) dao.getSession().get(User.class, loginId);
+		User user = em.find(User.class, loginId);
 		if (user == null) {
 			throw new UserNotFoundException("指定的用户不存在：" + loginId);
 		}
-		Hibernate.initialize(user.getRoles());
+		user.getRoles().size();
 		List<Organization> parents = user.getDepartments();
-		Hibernate.initialize(parents);
+		parents.size();
 		for (Organization org : parents) {
-			Hibernate.initialize(org.getRoles());
+			org.getRoles().size();
 			if (org.getParent() != null) {
-				Hibernate.initialize(org.getParent());
+				org.getParent();
 			}
 		}
 		return user;
@@ -79,54 +58,52 @@ public class UserServiceImpl implements UserService {
 	/** {@inheritDoc} */
 	@Override
 	public Role getRole(String auth) {
-		Role role = (Role) dao.getSession().get(Role.class, auth);
-		Hibernate.initialize(role.getFunctions());
-		Hibernate.initialize(role.getRoleResList());
+		Role role = em.find(Role.class, auth);
 		return role;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public PagedQueryResult<User> searchUser(UserPagedQueryParam param) {
-		Criteria criteria = dao.getSession().createCriteria(User.class);
-		if (StringUtils.isNotBlank(param.getName())) {
-			criteria.add(Restrictions.ilike("displayName", param.getName().trim().toLowerCase(), MatchMode.ANYWHERE));
-		}
-		/*
-		 * if (StringUtils.isNotBlank(param.getOrgName())){
-		 * criteria.createAlias("org", "org");
-		 * criteria.createAlias("org.parent", "porg");
-		 * criteria.add(Restrictions.or(Restrictions.ilike("org.name",
-		 * param.getOrgName().trim(), MatchMode.ANYWHERE),
-		 * Restrictions.ilike("porg.name", param.getOrgName().trim(),
-		 * MatchMode.ANYWHERE))); }
-		 */
-		criteria.addOrder(Order.asc("displayName"));
-		PagedQueryResult<User> rst = dao.executePagingQuery(criteria, param);
-		for (User user : rst.getDatas()) {
-			if (user.getOrg() != null) {
-				Hibernate.initialize(user.getOrg().getParent());
-			}
-		}
-		return rst;
+		// Criteria criteria = dao.getSession().createCriteria(User.class);
+		// if (StringUtils.isNotBlank(param.getName())) {
+		// criteria.add(Restrictions.ilike("displayName",
+		// param.getName().trim().toLowerCase(), MatchMode.ANYWHERE));
+		// }
+		// /*
+		// * if (StringUtils.isNotBlank(param.getOrgName())){
+		// * criteria.createAlias("org", "org");
+		// * criteria.createAlias("org.parent", "porg");
+		// * criteria.add(Restrictions.or(Restrictions.ilike("org.name",
+		// * param.getOrgName().trim(), MatchMode.ANYWHERE),
+		// * Restrictions.ilike("porg.name", param.getOrgName().trim(),
+		// * MatchMode.ANYWHERE))); }
+		// */
+		// criteria.addOrder(Order.asc("displayName"));
+		// PagedQueryResult<User> rst = dao.executePagingQuery(criteria, param);
+		// for (User user : rst.getDatas()) {
+		// if (user.getOrg() != null) {
+		// Hibernate.initialize(user.getOrg().getParent());
+		// }
+		// }
+		return null;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	@Transactional(readOnly = false)
 	public void updateUser(User user) {
-		log.info("saveUser saveUser saveUser saveUser");
-		// dao.update(user);
-		dao.getSession().merge(user);
+		log.info("saveUser {}", user.getCode());
+		em.merge(user);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public List<Organization> getOrgTreeByLevel(int level) {
-		Query queryOrgByLevelType = dao.getSession().getNamedQuery("Organization.getByLevel");
-		queryOrgByLevelType.setInteger("level", level);
+		Query queryOrgByLevelType = em.createNamedQuery("Organization.getByLevel");
+		queryOrgByLevelType.setParameter("level", level);
 		@SuppressWarnings("unchecked")
-		List<Organization> list = queryOrgByLevelType.list();
+		List<Organization> list = queryOrgByLevelType.getResultList();
 		initOrgList(list);
 		return list;
 
@@ -138,7 +115,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	private void initOrgList(List<Organization> orgs) {
 		for (Organization org : orgs) {
-			Hibernate.initialize(org.getRoles());
+			org.getRoles().size();
 			initOrgList(org.getChildOrgs());
 		}
 
@@ -147,11 +124,11 @@ public class UserServiceImpl implements UserService {
 	/** {@inheritDoc} */
 	@Override
 	public List<Organization> getOrganizationByLevelType(int level, String type) {
-		Query queryOrgByLevelType = dao.getSession().getNamedQuery("Organization.getByLevelType");
-		queryOrgByLevelType.setInteger("level", level);
-		queryOrgByLevelType.setString("type", type);
+		Query queryOrgByLevelType = em.createNamedQuery("Organization.getByLevelType");
+		queryOrgByLevelType.setParameter("level", level);
+		queryOrgByLevelType.setParameter("type", type);
 		@SuppressWarnings("unchecked")
-		List<Organization> list = queryOrgByLevelType.list();
+		List<Organization> list = queryOrgByLevelType.getResultList();
 		return list;
 	}
 
@@ -189,17 +166,17 @@ public class UserServiceImpl implements UserService {
 				// }
 			}
 
-			dao.getSession().merge(org);
+			em.merge(org);
 		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public List<User> getUserByOrgCode(String orgCode) {
-		Query queryUserByOrgCode = dao.getSession().getNamedQuery("User.getByOrgCode");
-		queryUserByOrgCode.setString("code", orgCode);
+		Query queryUserByOrgCode = em.createNamedQuery("User.getByOrgCode");
+		queryUserByOrgCode.setParameter("code", orgCode);
 		@SuppressWarnings("unchecked")
-		List<User> users = queryUserByOrgCode.list();
+		List<User> users = queryUserByOrgCode.getResultList();
 		initUsers(users);
 		return users;
 	}
@@ -210,21 +187,16 @@ public class UserServiceImpl implements UserService {
 	 */
 	private void initUsers(List<User> users) {
 		for (User user : users) {
-			Hibernate.initialize(user.getDepartments());
+			user.getDepartments().size();
 		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Organization getOrganization(String orgCode) {
-		Organization org = (Organization) dao.getSession().get(Organization.class, orgCode);
-		if (org == null) {
-			org = (Organization) dao.getSession().createQuery("select o from Organization o where o.nodeCode = :nodeCode and o.level =2")
-					.setParameter("nodeCode", orgCode).uniqueResult();
-		}
-		System.out.println(orgCode + "------------------");
-		Hibernate.initialize(org.getRoles());
-		Hibernate.initialize(org.getChildOrgs());
+		Organization org = em.find(Organization.class, orgCode);
+		org.getRoles().size();
+		org.getChildOrgs().size();
 		Set<User> users = org.getUsers();
 		initUsers(users);
 		return org;
@@ -232,11 +204,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Organization getOrganizationLite(String orgCode) {
-		Organization org = (Organization) dao.getSession().get(Organization.class, orgCode);
-		if (org == null) {
-			org = (Organization) dao.getSession().createQuery("select o from Organization o where o.nodeCode = :nodeCode and o.level =2")
-					.setParameter("nodeCode", orgCode).uniqueResult();
-		}
+		Organization org = em.find(Organization.class, orgCode);
 		return org;
 
 	}
@@ -247,7 +215,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	private void initUsers(Set<User> users) {
 		for (User user : users) {
-			Hibernate.initialize(user.getDepartments());
+			user.getDepartments().size();
 		}
 	}
 
@@ -255,86 +223,53 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(readOnly = false)
 	public void updateOrganization(Organization org) {
-		dao.getSession().merge(org);
+		em.merge(org);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	@Transactional(readOnly = false)
 	public void delOrganization(String orgCode) {
-		Organization org = (Organization) dao.getSession().get(Organization.class, orgCode);
+		Organization org = em.find(Organization.class, orgCode);
 		Organization parent = org.getParent();
-		parent.getChildOrgs().remove(org);
-		dao.getSession().delete(org);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public PagedQueryResult<Role> searchRole(RolePagedQueryParam queryParam) {
-		Criteria criteria = dao.getSession().createCriteria(Role.class);
-		if (StringUtils.isNotBlank(queryParam.getRoleName())) {
-			criteria.add(Restrictions.ilike("name", queryParam.getRoleName().trim().toLowerCase(), MatchMode.ANYWHERE));
+		if (parent != null) {
+			parent.getChildOrgs().remove(org);
 		}
-
-		criteria.addOrder(Order.asc("name"));
-		PagedQueryResult<Role> rst = dao.executePagingQuery(criteria, queryParam);
-		return rst;
+		em.remove(org);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	@Transactional(readOnly = false)
 	public void updateRole(Role theRole) {
-		Role role = (Role) dao.getSession().merge(theRole);
-		theRole.setAuthority(role.getAuthority());
-		// dao.getSessionFactory().getCache().evictEntityRegion(Role.class);
-		// Hibernate.initialize(theRole.getFunctions());
+		em.merge(theRole);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	@Transactional(readOnly = false)
 	public void delRole(String roleCode) {
-		Session session = dao.getSession();
-
-		Role role = (Role) session.load(Role.class, roleCode);
-		session.delete(role);
+		Role role = em.getReference(Role.class, roleCode);
+		em.remove(role);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean haveRelationWithOrg(String roleId) {
-		BigDecimal count = (BigDecimal) dao.getSession().createSQLQuery("select count(*) from RI_NT_AUTH_ORG_ROLE t where t.ROLE_ID = :roleId")
-				.setString("roleId", roleId).uniqueResult();
-		return count.intValue() > 0;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public boolean haveRelationWithUser(String roleId) {
-		BigDecimal count = (BigDecimal) dao.getSession().createSQLQuery("select count(*) from RI_NT_AUTH_USER_ROLE t where t.ROLE_CODE = :roleId")
-				.setString("roleId", roleId).uniqueResult();
-		return count.intValue() > 0;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public Set<String> getResource(LoginUser loginUser, String resourceType, int operType) {
+	public Set<String> getResource(LoginUser loginUser, String resourceType) {
 		Collection<Role> roleSet = loginUser.getAuthorities();
 		String[] roleIds = new String[roleSet.size()];
 		int i = 0;
 		for (Role rl : roleSet) {
 			roleIds[i++] = rl.getAuthority();
 		}
-		@SuppressWarnings("unchecked")
-		List<RoleResource> roleResList = dao.getSession().getNamedQuery("RoleResource.getByRoles").setParameterList("roles", roleIds)
-				.setParameter("type", resourceType).setParameter("operationType", operType).list();
+		List<RoleResource> roleResList = em.createNamedQuery("RoleResource.getByRoles", RoleResource.class).setParameter("roles", roleIds)
+		        .setParameter("type", resourceType).getResultList();
 		Set<String> resSet = new HashSet<String>();
 		for (RoleResource roleRes : roleResList) {
 			resSet.add(roleRes.getResource().getResourceId());
 		}
 		// for (Role role : roleSet) {
-		// role = (Role) dao.getSession().get(Role.class, role.getId());
+		// role = (Role) em.find((Role.class, role.getId());
 		// Hibernate.initialize(role.getRoleResList());
 		// roleResList = role.getRoleResList();
 		// if (roleResList != null) {
@@ -350,41 +285,10 @@ public class UserServiceImpl implements UserService {
 		return resSet;
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<User> getUserByOrgCodeAndRoleId(String[] orgCodes, String roleId) {
-		// 查询特定组织中具有某种特定角色的用户
-		Criteria userCriteria = dao.getSession().createCriteria(User.class);
-		// 关联组织表
-		userCriteria.createAlias("departments", "org");
-		userCriteria.add(Restrictions.in("org.code", orgCodes));
-		// 关联角色表
-		userCriteria.createAlias("roles", "role");
-		userCriteria.add(Restrictions.eq("role.authority", roleId));
-		List<User> users = userCriteria.list();
-
-		// 查询具有特定角色的组织下所有的用户
-		Criteria organCriteria = dao.getSession().createCriteria(Organization.class);
-		// 关联角色表
-		organCriteria.createAlias("roles", "role");
-		organCriteria.add(Restrictions.eq("role.authority", roleId));
-		List<Organization> organs = organCriteria.list();
-
-		// 两次查询结果做并集
-		for (Organization organ : organs) {
-			users.addAll(organ.getUsers());
-		}
-
-		return userCriteria.list();
-	}
-
-	/** {@inheritDoc} */
 	@Override
 	@Transactional(readOnly = false)
 	public void updateUserPassword(String userCode, String newPasswd, String oldPassword) {
-		Session session = dao.getSession();
-		User user = (User) session.load(User.class, userCode);
+		User user = em.find(User.class, userCode);
 		if (oldPassword.equals(user.getPassword())) {
 			user.setPassword(newPasswd);
 		} else {

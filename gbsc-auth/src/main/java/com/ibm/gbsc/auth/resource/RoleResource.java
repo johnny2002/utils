@@ -19,13 +19,13 @@ import javax.persistence.QueryHint;
 import javax.persistence.Table;
 
 import com.ibm.gbsc.auth.user.Role;
-import com.ibm.gbsc.utils.vo.BaseVO;
+import com.ibm.gbsc.common.vo.BaseVO;
 
 /**
  * @author fanjingxuan
  */
 @Entity
-@Table(name = "RI_NT_AUTH_ROLE_RES")
+@Table(name = "GBSC_AUTH_ROLE_RES")
 @NamedQueries({
         @NamedQuery(name = "RoleResource.delByRoleId", query = "delete from RoleResource rr where rr.role.authority = :roleId and rr.operationType=:operationType"),
         @NamedQuery(name = "RoleResource.getByRoles", query = " from RoleResource rr where rr.role.authority in ( :roles ) and rr.resource.resourceType=:type "

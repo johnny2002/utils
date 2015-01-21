@@ -13,26 +13,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
 
 /**
  * Organization object.
- * 
+ *
  * @author Johnny
  */
 @Entity
-@Table(name = "RI_NT_AUTH_ORG")
+@Table(name = "GBSC_AUTH_ORG")
 // @FilterDef(name="filterChildOrg")
 @NamedQueries({
-		@NamedQuery(name = "Organization.getByLevel", query = "select o from Organization o where o.level = :level order by o.code", readOnly = true),
-		@NamedQuery(name = "Organization.getByLevelType", query = "select o from Organization o where o.level = :level and o.type = :type order by o.code", readOnly = true) })
+        @NamedQuery(name = "Organization.getByLevel", query = "select o from Organization o where o.level = :level order by o.code", hints = { @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
+        @NamedQuery(name = "Organization.getByLevelType", query = "select o from Organization o where o.level = :level and o.type = :type order by o.code", hints = { @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
 public class Organization implements Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 593172425890684180L;
 	private String code;
@@ -46,7 +46,7 @@ public class Organization implements Serializable {
 	private Set<Role> roles;
 	private Set<User> users;
 
-	//public static String HEAD_NODE_CODE = "001";
+	// public static String HEAD_NODE_CODE = "001";
 
 	/**
 	 * @return the code
@@ -148,7 +148,7 @@ public class Organization implements Serializable {
 
 	/**
 	 * 是否虚拟组织: 如风险平台项目组是一个虚拟组织.
-	 * 
+	 *
 	 * @return virtual
 	 */
 	@Column(name = "IS_VIRTUAL")
@@ -169,7 +169,8 @@ public class Organization implements Serializable {
 	 */
 
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.LAZY)
-	// @Filter(name="filterChildOrg", condition=" (parent_org_id = '73' or  org_name like '%风险%' or org_name like '%客户%') ")
+	// @Filter(name="filterChildOrg",
+	// condition=" (parent_org_id = '73' or  org_name like '%风险%' or org_name like '%客户%') ")
 	public List<Organization> getChildOrgs() {
 		return childOrgs;
 	}
@@ -187,7 +188,7 @@ public class Organization implements Serializable {
 	 * @return roles
 	 */
 	@ManyToMany
-	@JoinTable(name = "RI_NT_AUTH_ORG_ROLE", joinColumns = { @JoinColumn(name = "ORG_CODE") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") })
+	@JoinTable(name = "GBSC_AUTH_ORG_ROLE", joinColumns = { @JoinColumn(name = "ORG_CODE") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") })
 	public Set<Role> getRoles() {
 		return roles;
 	}

@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -19,7 +20,7 @@ import javax.persistence.QueryHint;
 import javax.persistence.Table;
 
 import com.ibm.gbsc.auth.user.Role;
-import com.ibm.gbsc.utils.vo.BaseVO;
+import com.ibm.gbsc.common.vo.BaseVO;
 
 /**
  * 功能.
@@ -27,7 +28,7 @@ import com.ibm.gbsc.utils.vo.BaseVO;
  * @author Johnny
  */
 @Entity
-@Table(name = "RI_NT_AUTH_FUNC8")
+@Table(name = "GBSC_AUTH_FUNC8")
 @NamedQueries({
         @NamedQuery(name = "Function.getAll", query = "select menu from Function menu where menu.active = true", hints = {
                 @QueryHint(name = "org.hibernate.readOnly", value = "true"), @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
@@ -208,7 +209,8 @@ public class Function implements BaseVO, Serializable {
 	/**
 	 * @return the roles
 	 */
-	@ManyToMany(mappedBy = "functions")
+	@ManyToMany
+	@JoinTable(name = "GBSC_AUTH_FUNC_ROLE", joinColumns = { @JoinColumn(name = "FUNC_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") })
 	public Set<Role> getRoles() {
 		return roles;
 	}

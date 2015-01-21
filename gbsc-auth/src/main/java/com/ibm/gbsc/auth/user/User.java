@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ibm.gbsc.auth.user;
 
@@ -15,24 +15,24 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
-
-import com.ibm.banking.framework.dto.BaseVO;
+import com.ibm.gbsc.common.vo.BaseVO;
 
 /**
  * @author Johnny
- * 
+ *
  */
 @Entity
-@Table(name = "RI_NT_AUTH_USER")
-@NamedQueries({ @NamedQuery(name = "User.getByOrgCode", query = "select u from User u inner join u.departments d where d.code = :code order by u.code", readOnly = true) })
+@Table(name = "GBSC_AUTH_USER")
+@NamedQueries({ @NamedQuery(name = "User.getByOrgCode", query = "select u from User u inner join u.departments d where d.code = :code order by u.code", hints = { @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
 public class User implements BaseVO, Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 8574148353464532503L;
 	private String code;
@@ -113,7 +113,7 @@ public class User implements BaseVO, Serializable {
 	 * @return the org
 	 */
 	@ManyToMany
-	@JoinTable(name = "RI_NT_AUTH_USER_ORG", joinColumns = { @JoinColumn(name = "USER_CODE") }, inverseJoinColumns = { @JoinColumn(name = "ORG_CODE") })
+	@JoinTable(name = "GBSC_AUTH_USER_ORG", joinColumns = { @JoinColumn(name = "USER_CODE") }, inverseJoinColumns = { @JoinColumn(name = "ORG_CODE") })
 	public List<Organization> getDepartments() {
 		return departments;
 	}
@@ -130,7 +130,7 @@ public class User implements BaseVO, Serializable {
 	 * @return the roles
 	 */
 	@ManyToMany
-	@JoinTable(name = "RI_NT_AUTH_USER_ROLE", joinColumns = { @JoinColumn(name = "USER_CODE") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_CODE") })
+	@JoinTable(name = "GBSC_AUTH_USER_ROLE", joinColumns = { @JoinColumn(name = "USER_CODE") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_CODE") })
 	public Set<Role> getRoles() {
 		return roles;
 	}
@@ -144,7 +144,7 @@ public class User implements BaseVO, Serializable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The 1st non-virtual organization
 	 */
 	@Transient
@@ -153,7 +153,7 @@ public class User implements BaseVO, Serializable {
 		if (getDepartments() != null) {
 			for (Organization org : getDepartments()) {
 				if (hOrg != null && !org.isVirtual()) {
-					if (hOrg.getLevel() > org.getLevel() || hOrg.getNodeCode().compareTo(org.getNodeCode()) > 0) {
+					if (hOrg.getLevel() > org.getLevel()) {
 						hOrg = org;
 					}
 				} else {
@@ -166,7 +166,7 @@ public class User implements BaseVO, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -175,6 +175,7 @@ public class User implements BaseVO, Serializable {
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	@Transient
 	public String getId() {
 		return code;
@@ -240,20 +241,6 @@ public class User implements BaseVO, Serializable {
 	 */
 	public void setStatus(UserState status) {
 		this.status = status;
-	}
-
-	@Transient
-	public boolean isHeadUser() {
-		boolean isHead = false;
-		if (getDepartments() != null) {
-			for (Organization org : getDepartments()) {
-				if (org.getType().equals("HEAD")) {
-					isHead = true;
-					break;
-				}
-			}
-		}
-		return isHead;
 	}
 
 }

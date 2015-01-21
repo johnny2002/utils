@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ibm.gbsc.auth.web.user;
 
@@ -10,24 +10,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.ibm.gbsc.auth.user.Role;
 import com.ibm.gbsc.auth.user.UserService;
 
 /**
  * @author fanjingxuan
- * 
+ *
  */
 @Controller
-@RequestMapping("/roleManage")
-@SessionAttributes({ "theRole" })
+@RequestMapping("/auth")
 public class RoleController {
 	@Autowired
 	UserService userService;
 
 	/**
-	 * @param model model.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/toAddRolePage", method = RequestMethod.GET)
@@ -39,8 +38,10 @@ public class RoleController {
 	}
 
 	/**
-	 * @param theRole theRole.
-	 * @param model model.
+	 * @param theRole
+	 *            theRole.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/addOrUpdateRole", method = RequestMethod.POST)
@@ -50,20 +51,24 @@ public class RoleController {
 	}
 
 	/**
-	 * @param roleCode roleCode.
-	 * @param model model.
+	 * @param roleCode
+	 *            roleCode.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
-//	@RequestMapping(value = "/delRole", method = RequestMethod.POST)
-//	@ResponseBody
-//	public String delRole(@RequestParam String roleCode,Model model) {
-//		userService.delRole(roleCode);
-//		return "success";
-//	}
+	// @RequestMapping(value = "/delRole", method = RequestMethod.POST)
+	// @ResponseBody
+	// public String delRole(@RequestParam String roleCode,Model model) {
+	// userService.delRole(roleCode);
+	// return "success";
+	// }
 
 	/**
-	 * @param roleCode roleCode.
-	 * @param model model.
+	 * @param roleCode
+	 *            roleCode.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/update/{roleCode}", method = RequestMethod.GET)

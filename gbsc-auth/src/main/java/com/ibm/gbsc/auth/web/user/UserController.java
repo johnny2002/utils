@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ibm.gbsc.auth.web.user;
 
@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,11 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.support.RequestContext;
 
-import com.ibm.banking.framework.security.SecurityUtil;
 import com.ibm.gbsc.auth.user.CurrentPasswdIncorrectException;
 import com.ibm.gbsc.auth.user.LoginUser;
 import com.ibm.gbsc.auth.user.User;
@@ -35,25 +31,25 @@ import com.ibm.gbsc.auth.user.UserState;
 /**
  * @author fanjingxuan
  */
-@Controller
+// @Controller
 @RequestMapping("/auth")
-@SessionAttributes({ "newUser" })
 public class UserController {
 	@Autowired
 	UserService userService;
 	@Autowired
 	MessageSource messageSource;
 	@Autowired(required = false)
-	PasswordEncoder passwordEncoder;
+	org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 	@Value("%{systemWideSalt}")
 	String salt;
 
 	/**
 	 * 打开new user page.
-	 * 
+	 *
 	 * @param model
 	 *            model
-	 * @param request request.
+	 * @param request
+	 *            request.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/userManage/toAddUserPage", method = RequestMethod.GET)
@@ -66,10 +62,14 @@ public class UserController {
 	}
 
 	/**
-	 * @param newUser newUser.
-	 * @param oldPwd oldPwd.
-	 * @param model model.
-	 * @param status status.
+	 * @param newUser
+	 *            newUser.
+	 * @param oldPwd
+	 *            oldPwd.
+	 * @param model
+	 *            model.
+	 * @param status
+	 *            status.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/userManage/addOrUpdateUser", method = RequestMethod.POST)
@@ -86,9 +86,12 @@ public class UserController {
 	}
 
 	/**
-	 * @param userCode userCode.
-	 * @param model model.
-	 * @param request request.
+	 * @param userCode
+	 *            userCode.
+	 * @param model
+	 *            model.
+	 * @param request
+	 *            request.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/userManage/checkUser/{userCode}", method = RequestMethod.GET)
@@ -111,9 +114,12 @@ public class UserController {
 	// }
 
 	/**
-	 * @param userCode userCode.
-	 * @param model model.
-	 * @param request request.
+	 * @param userCode
+	 *            userCode.
+	 * @param model
+	 *            model.
+	 * @param request
+	 *            request.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/userManage/update/{userCode}", method = RequestMethod.GET)
@@ -125,15 +131,16 @@ public class UserController {
 		return "userManage.tile";
 	}
 
-
 	/**
-	 * @param request request.
-	 *  @return user status map
+	 * @param request
+	 *            request.
+	 * @return user status map
 	 */
 	private Map<UserState, String> getUserStatusMap(HttpServletRequest request) {
 		HashMap<UserState, String> sm = new HashMap<UserState, String>();
 		for (UserState status : UserState.values()) {
-			sm.put(status, messageSource.getMessage("user.UserState." + status, null, status.name(), new RequestContext(request).getLocale()));
+			sm.put(status,
+			        messageSource.getMessage("user.UserState." + status, null, status.name(), new RequestContext(request).getLocale()));
 		}
 		return sm;
 	}
@@ -147,9 +154,12 @@ public class UserController {
 	}
 
 	/**
-	 * @param oldPwd oldPwd.
-	 * @param newPwd newPwd.
-	 * @param model model.
+	 * @param oldPwd
+	 *            oldPwd.
+	 * @param newPwd
+	 *            newPwd.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/user/passwd", method = RequestMethod.POST)

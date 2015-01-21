@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ibm.gbsc.auth.web.user;
 
@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.google.gson.ExclusionStrategy;
@@ -35,11 +33,10 @@ import com.ibm.gbsc.auth.user.UserService;
 
 /**
  * @author fanjingxuan
- * 
+ *
  */
-@Controller
+// @Controller
 @RequestMapping("/auth")
-@SessionAttributes({ "roleList", "resList" })
 public class RoleResourceContoller {
 	Logger log = LoggerFactory.getLogger(getClass());
 	@Autowired
@@ -49,7 +46,8 @@ public class RoleResourceContoller {
 	ResourceService resourceService;
 
 	/**
-	 * @param model model.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/roleResource/roles", method = RequestMethod.GET)
@@ -60,11 +58,13 @@ public class RoleResourceContoller {
 		GsonBuilder bld = new GsonBuilder();
 		bld.addSerializationExclusionStrategy(new ExclusionStrategy() {
 
+			@Override
 			public boolean shouldSkipField(FieldAttributes f) {
 
 				return !f.getName().equals("name") && !f.getName().equals("authority");
 			}
 
+			@Override
 			public boolean shouldSkipClass(Class<?> clazz) {
 				return false;
 			}
@@ -72,6 +72,7 @@ public class RoleResourceContoller {
 
 		bld.setFieldNamingStrategy(new FieldNamingStrategy() {
 
+			@Override
 			public String translateName(Field f) {
 				if (f.getName().equals("authority")) {
 					return "id";
@@ -96,15 +97,19 @@ public class RoleResourceContoller {
 	}
 
 	/**
-	 * @param roleId roleId.
-	 * @param operType operType.
-	 * @param roleList roleList.
-	 * @param model model.
+	 * @param roleId
+	 *            roleId.
+	 * @param operType
+	 *            operType.
+	 * @param roleList
+	 *            roleList.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/roleResource/roles/{roleId}", method = RequestMethod.GET)
 	public String showRoleResource(@PathVariable String roleId, @RequestParam(required = false, defaultValue = "1") String operType,
-			@ModelAttribute("roleList") List<Role> roleList, Model model) {
+	        @ModelAttribute("roleList") List<Role> roleList, Model model) {
 		List<Resource> resList = resourceService.getAllResource();
 		Role role = findRole(roleList, roleId);
 		List<RoleResource> roleResources = role.getRoleResList();
@@ -118,12 +123,14 @@ public class RoleResourceContoller {
 		GsonBuilder bld = new GsonBuilder();
 		bld.addSerializationExclusionStrategy(new ExclusionStrategy() {
 
+			@Override
 			public boolean shouldSkipField(FieldAttributes f) {
 
 				return !f.getName().equals("resourceId") && !f.getName().equals("checked") && !f.getName().equals("resourceName")
-						&& !f.getName().equals("childRes");
+				        && !f.getName().equals("childRes");
 			}
 
+			@Override
 			public boolean shouldSkipClass(Class<?> clazz) {
 				return false;
 			}
@@ -131,6 +138,7 @@ public class RoleResourceContoller {
 
 		bld.setFieldNamingStrategy(new FieldNamingStrategy() {
 
+			@Override
 			public String translateName(Field f) {
 				if (f.getName().equals("childRes")) {
 					return "children";
@@ -153,19 +161,26 @@ public class RoleResourceContoller {
 	}
 
 	/**
-	 * @param roleId roleId.
-	 * @param oldRoleId oldRoleId.
-	 * @param resourceIds resourceIds.
-	 * @param operType operType.
-	 * @param roleList roleList.
-	 * @param resList resList.
-	 * @param model model.
+	 * @param roleId
+	 *            roleId.
+	 * @param oldRoleId
+	 *            oldRoleId.
+	 * @param resourceIds
+	 *            resourceIds.
+	 * @param operType
+	 *            operType.
+	 * @param roleList
+	 *            roleList.
+	 * @param resList
+	 *            resList.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/roleResource/cacheRoleRes", method = RequestMethod.POST)
 	public String cacheRoleRes(@RequestParam String roleId, @RequestParam String oldRoleId, @RequestParam String resourceIds,
-			@RequestParam String operType, @ModelAttribute("roleList") List<Role> roleList, @ModelAttribute("resList") List<Resource> resList,
-			Model model) {
+	        @RequestParam String operType, @ModelAttribute("roleList") List<Role> roleList,
+	        @ModelAttribute("resList") List<Resource> resList, Model model) {
 		Role oldRole = findRole(roleList, oldRoleId);
 
 		if (oldRole != null) {
@@ -209,11 +224,13 @@ public class RoleResourceContoller {
 		GsonBuilder bld = new GsonBuilder();
 		bld.addSerializationExclusionStrategy(new ExclusionStrategy() {
 
+			@Override
 			public boolean shouldSkipField(FieldAttributes f) {
 
 				return !f.getName().equals("resourceId") && !f.getName().equals("resourceName") && !f.getName().equals("childRes");
 			}
 
+			@Override
 			public boolean shouldSkipClass(Class<?> clazz) {
 				return false;
 			}
@@ -221,6 +238,7 @@ public class RoleResourceContoller {
 
 		bld.setFieldNamingStrategy(new FieldNamingStrategy() {
 
+			@Override
 			public String translateName(Field f) {
 				if (f.getName().equals("childRes")) {
 					return "children";
@@ -243,19 +261,26 @@ public class RoleResourceContoller {
 	}
 
 	/**
-	 * @param roleId roleId.
-	 * @param resourceIds resourceIds.
-	 * @param oldOperType oldOperType.
-	 * @param operType operType.
-	 * @param roleList roleList.
-	 * @param resList resList.
-	 * @param model model.
+	 * @param roleId
+	 *            roleId.
+	 * @param resourceIds
+	 *            resourceIds.
+	 * @param oldOperType
+	 *            oldOperType.
+	 * @param operType
+	 *            operType.
+	 * @param roleList
+	 *            roleList.
+	 * @param resList
+	 *            resList.
+	 * @param model
+	 *            model.
 	 */
 	@RequestMapping(value = "/roleResource/cacheCurrentRole", method = RequestMethod.POST)
 	@ResponseBody
 	public void cacheCurrentRole(@RequestParam String roleId, @RequestParam String resourceIds, @RequestParam String oldOperType,
-			@RequestParam String operType, @ModelAttribute("roleList") List<Role> roleList, @ModelAttribute("resList") List<Resource> resList,
-			Model model) {
+	        @RequestParam String operType, @ModelAttribute("roleList") List<Role> roleList,
+	        @ModelAttribute("resList") List<Resource> resList, Model model) {
 		// Role currentRole = findRole(roleList, roleId);
 		//
 		// if (currentRole != null) {
@@ -299,18 +324,26 @@ public class RoleResourceContoller {
 	}
 
 	/**
-	 * @param roleId roleId.
-	 * @param resourceIds resourceIds.
-	 * @param operType operType.
-	 * @param roleList roleList.
-	 * @param resList resList.
-	 * @param model model.
-	 * @param status status.
+	 * @param roleId
+	 *            roleId.
+	 * @param resourceIds
+	 *            resourceIds.
+	 * @param operType
+	 *            operType.
+	 * @param roleList
+	 *            roleList.
+	 * @param resList
+	 *            resList.
+	 * @param model
+	 *            model.
+	 * @param status
+	 *            status.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/roleResource/savaRoleRes", method = RequestMethod.POST)
 	public String savaRoleRes(@RequestParam String roleId, @RequestParam String resourceIds, @RequestParam String operType,
-			@ModelAttribute("roleList") List<Role> roleList, @ModelAttribute("resList") List<Resource> resList, Model model, SessionStatus status) {
+	        @ModelAttribute("roleList") List<Role> roleList, @ModelAttribute("resList") List<Resource> resList, Model model,
+	        SessionStatus status) {
 		Role currentRole = findRole(roleList, roleId);
 		if (currentRole != null) {
 			List<RoleResource> roleResList = currentRole.getRoleResList();
@@ -362,8 +395,10 @@ public class RoleResourceContoller {
 	}
 
 	/**
-	 * @param allResList allResList.
-	 * @param haveResources haveResources.
+	 * @param allResList
+	 *            allResList.
+	 * @param haveResources
+	 *            haveResources.
 	 */
 	private void compareChecked(List<Resource> allResList, ArrayList<String> haveResources) {
 		for (Resource resource : allResList) {
@@ -379,8 +414,10 @@ public class RoleResourceContoller {
 	}
 
 	/**
-	 * @param resList resList.
-	 * @param resourceId resourceId.
+	 * @param resList
+	 *            resList.
+	 * @param resourceId
+	 *            resourceId.
 	 * @return resource is system dictionary.
 	 */
 	private Resource findResource(List<Resource> resList, String resourceId) {
@@ -401,8 +438,10 @@ public class RoleResourceContoller {
 	}
 
 	/**
-	 * @param roleList roleList.
-	 * @param roleId roleId.
+	 * @param roleList
+	 *            roleList.
+	 * @param roleId
+	 *            roleId.
 	 * @return role is system dictionary.
 	 */
 	private Role findRole(List<Role> roleList, String roleId) {

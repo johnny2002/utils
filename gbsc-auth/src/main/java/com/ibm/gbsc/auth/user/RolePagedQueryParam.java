@@ -1,9 +1,9 @@
 /**
- * 
+ *
  */
 package com.ibm.gbsc.auth.user;
 
-import com.ibm.banking.framework.dto.PagedQueryParam;
+import com.ibm.gbsc.common.vo.PagedQueryParam;
 
 /**
  * @author fanjingxuan
@@ -11,10 +11,10 @@ import com.ibm.banking.framework.dto.PagedQueryParam;
  */
 public class RolePagedQueryParam extends PagedQueryParam {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -277271766889896225L;
-	
+
 	private String roleName;
 
 	/**
@@ -25,7 +25,8 @@ public class RolePagedQueryParam extends PagedQueryParam {
 	}
 
 	/**
-	 * @param roleName the roleName to set
+	 * @param roleName
+	 *            the roleName to set
 	 */
 	public void setRoleName(String roleName) {
 		this.roleName = roleName;

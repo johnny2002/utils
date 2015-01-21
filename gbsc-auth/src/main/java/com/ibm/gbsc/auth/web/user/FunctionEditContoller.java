@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ibm.gbsc.auth.web.user;
 
@@ -54,7 +54,7 @@ public class FunctionEditContoller {
 	 *            model
 	 * @return page
 	 */
-	@RequestMapping(value = "/function/functions", method = RequestMethod.GET)
+	@RequestMapping(value = "/auth/func", method = RequestMethod.GET)
 	public String showFunctionAll(Model model) {
 
 		List<Function> functionList = functionService.getFunctionTree();
@@ -62,11 +62,13 @@ public class FunctionEditContoller {
 		GsonBuilder bld = new GsonBuilder();
 		bld.addSerializationExclusionStrategy(new ExclusionStrategy() {
 
+			@Override
 			public boolean shouldSkipField(FieldAttributes f) {
 
 				return !f.getName().equals("name") && !f.getName().equals("id") && !f.getName().equals("children");
 			}
 
+			@Override
 			public boolean shouldSkipClass(Class<?> clazz) {
 				return false;
 			}
@@ -130,28 +132,35 @@ public class FunctionEditContoller {
 	}
 
 	/**
-	 * @param funcId func id
-	 * @param theFunction func
-	 * @param functionList func list
-	 * @param model model
+	 * @param funcId
+	 *            func id
+	 * @param theFunction
+	 *            func
+	 * @param functionList
+	 *            func list
+	 * @param model
+	 *            model
 	 * @return page
 	 */
 	@RequestMapping(value = "/function/cachefunc", method = RequestMethod.POST)
 	public String cacheFunctionChange(@RequestParam String funcId, @ModelAttribute("theFunction") Function theFunction,
-			@ModelAttribute("functionList") List<Function> functionList, Model model) {
+	        @ModelAttribute("functionList") List<Function> functionList, Model model) {
 		log.debug("cachefunc method");
 		return gotoFunctionDetail(funcId, functionList, model);
 	}
 
 	/**
-	 * @param theFunction func
-	 * @param functionList func list
-	 * @param status status
+	 * @param theFunction
+	 *            func
+	 * @param functionList
+	 *            func list
+	 * @param status
+	 *            status
 	 * @return page
 	 */
 	@RequestMapping(value = "/function/savefunc", method = RequestMethod.POST)
 	public String saveFunctionChange(@ModelAttribute("theFunction") Function theFunction,
-			@ModelAttribute("functionList") List<Function> functionList, SessionStatus status) {
+	        @ModelAttribute("functionList") List<Function> functionList, SessionStatus status) {
 
 		functionService.saveFunctionTree(functionList);
 		status.setComplete();
@@ -159,8 +168,10 @@ public class FunctionEditContoller {
 	}
 
 	/**
-	 * @param model model
-	 * @param status status
+	 * @param model
+	 *            model
+	 * @param status
+	 *            status
 	 * @return page
 	 */
 	@RequestMapping(value = "/function/cancelfunc", method = RequestMethod.GET)

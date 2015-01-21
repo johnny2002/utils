@@ -33,7 +33,7 @@ public class FunctionServiceImp implements FunctionService {
 	@SuppressWarnings("unchecked")
 	public List<Function> getFunctionsByType(String menuType, boolean retrieveAll) {
 		List<Function> funcs;
-		if (FunctionType.TOP.equals(menuType)) {
+		if ("TOP".equals(menuType)) {
 			funcs = em.createNamedQuery("Function.getTOP").getResultList();
 		} else {
 			funcs = em.createNamedQuery("Function.getMenu").getResultList();
@@ -115,7 +115,6 @@ public class FunctionServiceImp implements FunctionService {
 
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public List<Function> getFunctionTree() {
 		List<Function> menus = em.createNamedQuery("Function.get1stLevel", Function.class).getResultList();
@@ -123,7 +122,6 @@ public class FunctionServiceImp implements FunctionService {
 		return menus;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public List<Function> getAllFunctions() {
 		List<Function> menus = em.createNamedQuery("Function.getAll", Function.class).getResultList();
@@ -134,14 +132,13 @@ public class FunctionServiceImp implements FunctionService {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<Function> getFunctionsByType(String type) {
 		// session.enableFilter("menuActiveFilter");
 		List<Function> funcs;
-		if (FunctionType.TOP.equals(type)) {
-			funcs = em.createNamedQuery("Function.getTOP").getResultList();
+		if ("TOP".equals(type)) {
+			funcs = em.createNamedQuery("Function.getTOP", Function.class).getResultList();
 		} else {
-			funcs = em.createNamedQuery("Function.getByType").setParameter("menuType", type).getResultList();
+			funcs = em.createNamedQuery("Function.getByType", Function.class).setParameter("menuType", type).getResultList();
 		}
 		initSubMenus(funcs);
 		// session.disableFilter("menuActiveFilter");

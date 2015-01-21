@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ibm.gbsc.auth.web.user;
 
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.ibm.gbsc.auth.user.Role;
@@ -25,22 +24,21 @@ import com.ibm.gbsc.auth.user.UserService;
 
 /**
  * @author cui xx
- * 
+ *
  */
 @Controller
 @RequestMapping("/auth")
-@SessionAttributes({ "theUser" })
 public class UserEditController {
 	/**
-	 * 
+	 *
 	 */
-	private Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(getClass());
 	@Autowired
 	UserService userService;
 
 	/**
 	 * 用户列表.
-	 * 
+	 *
 	 * @param model
 	 *            model
 	 * @return page
@@ -54,9 +52,12 @@ public class UserEditController {
 	}
 
 	/**
-	 * @param loadNew loadNew.
-	 * @param model model.
-	 * @param status status.
+	 * @param loadNew
+	 *            loadNew.
+	 * @param model
+	 *            model.
+	 * @param status
+	 *            status.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/user/userRole", method = RequestMethod.GET)
@@ -69,8 +70,10 @@ public class UserEditController {
 	}
 
 	/**
-	 * @param code code.
-	 * @param model model.
+	 * @param code
+	 *            code.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/user/users/{code}", method = RequestMethod.GET)
@@ -91,7 +94,8 @@ public class UserEditController {
 	}
 
 	/**
-	 * @param model model.
+	 * @param model
+	 *            model.
 	 */
 	@ModelAttribute
 	public void refData(Model model) {
@@ -101,7 +105,8 @@ public class UserEditController {
 	}
 
 	/**
-	 * @param user user.
+	 * @param user
+	 *            user.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/user/saveuser", method = RequestMethod.POST)

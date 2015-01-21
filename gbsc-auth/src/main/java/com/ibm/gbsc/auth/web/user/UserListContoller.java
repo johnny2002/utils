@@ -1,21 +1,20 @@
 package com.ibm.gbsc.auth.web.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.ibm.banking.framework.dto.PagedQueryResult;
-import com.ibm.banking.framework.web.SearchListBaseController;
 import com.ibm.gbsc.auth.user.User;
 import com.ibm.gbsc.auth.user.UserPagedQueryParam;
 import com.ibm.gbsc.auth.user.UserService;
+import com.ibm.gbsc.common.vo.PagedQueryResult;
+import com.ibm.gbsc.web.springmvc.controller.SearchListBaseController;
 
 /**
  * @author yangyz
  *
  */
-@Controller
+// @Controller
 @RequestMapping("/auth/user")
 public class UserListContoller extends SearchListBaseController<User, UserPagedQueryParam> {
 

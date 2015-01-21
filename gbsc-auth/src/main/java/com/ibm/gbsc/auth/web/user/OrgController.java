@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ibm.gbsc.auth.web.user;
 
@@ -29,10 +29,10 @@ import com.ibm.gbsc.auth.user.UserService;
 
 /**
  * @author fanjingxuan
- * 
+ *
  */
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("/auth/org")
 @SessionAttributes({ "orgList", "theOrg" })
 public class OrgController {
 	Logger log = LoggerFactory.getLogger(getClass());
@@ -41,8 +41,9 @@ public class OrgController {
 
 	/**
 	 * 查询出所有的组织结构，并以树的形式展现在页面上.
-	 * 
-	 * @param model model
+	 *
+	 * @param model
+	 *            model
 	 * @return page
 	 */
 	@RequestMapping(value = "/org/orgs", method = RequestMethod.GET)
@@ -53,11 +54,14 @@ public class OrgController {
 		GsonBuilder bld = new GsonBuilder();
 		bld.addSerializationExclusionStrategy(new ExclusionStrategy() {
 
+			@Override
 			public boolean shouldSkipField(FieldAttributes f) {
 
-				return !f.getName().equals("name") && !f.getName().equals("code") && !f.getName().equals("childOrgs")&& !f.getName().equals("level");
+				return !f.getName().equals("name") && !f.getName().equals("code") && !f.getName().equals("childOrgs")
+				        && !f.getName().equals("level");
 			}
 
+			@Override
 			public boolean shouldSkipClass(Class<?> clazz) {
 				return false;
 			}
@@ -65,6 +69,7 @@ public class OrgController {
 
 		bld.setFieldNamingStrategy(new FieldNamingStrategy() {
 
+			@Override
 			public String translateName(Field f) {
 				if (f.getName().equals("childOrgs")) {
 					return "children";
@@ -80,10 +85,13 @@ public class OrgController {
 
 	/**
 	 * 展示当前选中的组织结构信息.
-	 * 
-	 * @param orgCode org code
-	 * @param orgList org list
-	 * @param model model
+	 *
+	 * @param orgCode
+	 *            org code
+	 * @param orgList
+	 *            org list
+	 * @param model
+	 *            model
 	 * @return page
 	 */
 	@RequestMapping(value = "/org/orgs/{orgCode}", method = RequestMethod.GET)
@@ -92,9 +100,12 @@ public class OrgController {
 	}
 
 	/**
-	 * @param orgCode ord code
-	 * @param orgList org list
-	 * @param model model
+	 * @param orgCode
+	 *            ord code
+	 * @param orgList
+	 *            org list
+	 * @param model
+	 *            model
 	 * @return page
 	 */
 	private String gotoOrgDetail(String orgCode, List<Organization> orgList, Model model) {
@@ -104,8 +115,10 @@ public class OrgController {
 	}
 
 	/**
-	 * @param orgList org list
-	 * @param orgCode org code
+	 * @param orgList
+	 *            org list
+	 * @param orgCode
+	 *            org code
 	 * @return the org.
 	 */
 	private Organization findOrg(List<Organization> orgList, String orgCode) {
@@ -125,14 +138,17 @@ public class OrgController {
 	}
 
 	/**
-	 * @param theOrg org
-	 * @param orgList org list
-	 * @param status status
+	 * @param theOrg
+	 *            org
+	 * @param orgList
+	 *            org list
+	 * @param status
+	 *            status
 	 * @return page
 	 */
 	@RequestMapping(value = "/org/saveOrg", method = RequestMethod.POST)
 	public String saveOrgChange(@ModelAttribute("theOrg") Organization theOrg, @ModelAttribute("orgList") List<Organization> orgList,
-			SessionStatus status) {
+	        SessionStatus status) {
 
 		userService.updateOrganization(theOrg);
 		status.setComplete();
@@ -140,9 +156,12 @@ public class OrgController {
 	}
 
 	/**
-	 * @param orgName org name
-	 * @param parentOrgCode parent org code
-	 * @param model model
+	 * @param orgName
+	 *            org name
+	 * @param parentOrgCode
+	 *            parent org code
+	 * @param model
+	 *            model
 	 * @return page
 	 */
 	@RequestMapping(value = "/org/initNewOrg")
@@ -160,8 +179,10 @@ public class OrgController {
 	}
 
 	/**
-	 * @param orgCode org code
-	 * @param model model
+	 * @param orgCode
+	 *            org code
+	 * @param model
+	 *            model
 	 * @return response
 	 */
 	@RequestMapping(value = "/org/checkOrg", method = RequestMethod.POST)
@@ -179,8 +200,10 @@ public class OrgController {
 	}
 
 	/**
-	 * @param orgCode org code
-	 * @param model model
+	 * @param orgCode
+	 *            org code
+	 * @param model
+	 *            model
 	 * @return page
 	 */
 	@RequestMapping(value = "/org/delOrg", method = RequestMethod.POST)
