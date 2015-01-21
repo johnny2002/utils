@@ -1,4 +1,4 @@
-package com.ibm.gbsc.utils.log;
+package com.ibm.gbsc.common.log;
 
 import java.io.File;
 import java.io.FileNotFoundException;

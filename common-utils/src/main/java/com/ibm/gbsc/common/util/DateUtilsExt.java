@@ -1,4 +1,4 @@
-package com.ibm.gbsc.utils.util;
+package com.ibm.gbsc.common.util;
 
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;

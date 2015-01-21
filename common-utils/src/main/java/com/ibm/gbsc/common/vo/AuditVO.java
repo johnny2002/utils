@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.ibm.gbsc.utils.vo;
+package com.ibm.gbsc.common.vo;
 
 import java.io.Serializable;
 import java.util.Date;
