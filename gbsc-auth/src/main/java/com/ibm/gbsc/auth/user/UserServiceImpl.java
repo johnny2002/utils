@@ -94,6 +94,9 @@ public class UserServiceImpl implements UserService {
 	@Transactional(readOnly = false)
 	public void updateUser(User user) {
 		log.info("saveUser {}", user.getCode());
+		// 由于用户所属部门不在本功能中更新，所以此处还原用户部门信息，以免被清除
+		User oldUser = em.find(User.class, user.getCode());
+		user.setDepartments(oldUser.getDepartments());
 		em.merge(user);
 	}
 

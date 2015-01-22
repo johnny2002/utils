@@ -52,6 +52,7 @@ public class UserController {
 	@ResponseBody
 	public String addOrUpdateUser(@PathVariable String userCode, @ModelAttribute User theUser, Model model, HttpServletRequest request) {
 		log.debug("Save user: {}", request.getParameter("code"));
+
 		userService.updateUser(theUser);
 		return messageSource.getMessage("auth.user.savedOK", new Object[] { userCode }, "User Saved OK", null);
 	}
