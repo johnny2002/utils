@@ -28,7 +28,7 @@ import com.ibm.gbsc.common.vo.BaseVO;
  * @author Johnny
  */
 @Entity
-@Table(name = "GBSC_AUTH_FUNC8")
+@Table(name = "GBSC_AUTH_FUNC")
 @NamedQueries({
         @NamedQuery(name = "Function.getAll", query = "select menu from Function menu where menu.active = true", hints = {
                 @QueryHint(name = "org.hibernate.readOnly", value = "true"), @QueryHint(name = "org.hibernate.cacheable", value = "true") }),

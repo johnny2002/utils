@@ -1,63 +1,81 @@
-<#import "/common/spring.ftl" as spring>
-<#assign sf = JspTaglibs["http://www.springframework.org/tags/form"] >
-<#assign c =JspTaglibs["http://java.sun.com/jsp/jstl/core"] >
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>Insert title here</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script type="text/javascript" src="${resRoot}/js/jquery/jquery${minSuffix}.js"></script>
-<script type="text/javascript" src="${resRoot}/js/jquery/jquery${minSuffix}.validate.js"></script>
-
+<#assign sf = JspTaglibs["http://www.springframework.org/tags/form"] >
+<#assign c = JspTaglibs["http://java.sun.com/jsp/jstl/core"] >
+<#assign fmt = JspTaglibs["http://java.sun.com/jsp/jstl/fmt"] >
+<#assign disp = JspTaglibs["http://displaytag.sf.net"] >
+<#import "/macros/spring.ftl" as spring>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<#include RscPage> 
 <style>
 .errorMessage{color:red}
+.errorClass{color:red}
 </style>
+<script type="text/javascript">
+	function putForm(theForm){
+		$.ajax({
+			url: theForm.action,
+			type: "PUT",
+			data: $(theForm).serialize(),
+			success: function( data ) {
+				alert(data);
+				window.location.reload();
+			},
+			error: function(request, error) {
+				alert(error);
+				//window.location.reload();
+			}
+			
+		});
+		return false;
+	}
+</script>
 
-<link href="${resRoot}/css/sn_common0925${minSuffix}.css" rel="stylesheet" type="text/css" />
-<style>.errorClass{color:red}</style>
 </head>
 <body>
-<form  action="saveFtl.htm" method="POST" id='form1'>
+<form method="post" id="userform">
 
+ 	<#--input type="hidden" name="_method" value="put"/ -->
 	<@spring.bind "theUser"/>
 	<@spring.showErrors  "<br>"  "errorClass"/>
-
-<@spring.formHiddenInput path="theUser.code" />
-<@spring.formHiddenInput path="theUser.displayName" />
-
-
-		<table>
-			<TR>
-				<TD>姓名:</TD>
-				<TD>${theUser.displayName}</TD>
-				<TD></TD>
-				<TD></TD>
-			</TR>
-			<TR>
-				<TD>省份:</TD>
-				<TD></TD>
-				
-				<TD>电话:</TD>
-				<TD><@spring.formInput path="theUser.email" />
-				<@spring.bind "theUser.email"/>
-				 <lable class="errorMessage">${spring.status.errorMessage}</lable>  
-				 </TD>
-			</TR>
-			<TR>
-				<TD>入职日期:</TD>
-				<TD>
-					<@spring.formInput path="theUser.lastLoginTime" /></TD>
-				<TD>入职日期:</TD>
-				<TD>
-				 <#if theUser.lastLoginTime??>${theUser.lastLoginTime?string("yyyy-MM-dd HH:mm:ss")}</#if> 		
-				</TD>
-			</TR>
+		<table class="resultTable">
+			<tr>
+				<td>员工编码</td>
+				<td>${theUser.code}</td><@spring.formHiddenInput path="theUser.code" />
+				<td>姓名:</td>
+				<td><@spring.formInput path="theUser.fullName" /></td>
+			</tr>
+			<tr>
+				<td>分机号码</td>
+				<td><@spring.formInput path="theUser.extNumber" /> </td>
+				<td>手提电话</td>
+				<td><@spring.formInput path="theUser.mobileNumber" /> </td>
+			</tr>
+			<tr>
+				<td>生日</td>
+				<td><@spring.formInput path="theUser.birthDate" /> 
+			 <#--if theUser.birthDate??>${theUser.birthDate?string("yyyy-MM-dd HH:mm:ss")}</#if--> 		
+				</td>
+				<td>状态</td>
+				<td>
+				 <@spring.formInput path="theUser.status" />		
+				</td>
+			</tr>
+			<tr>
+				<td>邮件地址</td>
+				<td><@spring.formInput path="theUser.email" /> </td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
 		</table>
 		
 		<br/>
 		
-		<input type="submit"/>
-		<input type="button" value=" Cancel " onclick="location.href='search.htm'"/>
+		<input type="button" value="保存" onclick="putForm(this.form)"/>
+		<input type="button" value="Cancel" onclick="location.href='search.htm'"/>
 		
 	
 	</form>

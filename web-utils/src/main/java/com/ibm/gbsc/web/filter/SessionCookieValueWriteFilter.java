@@ -35,19 +35,20 @@ public class SessionCookieValueWriteFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse rep, FilterChain chain) throws IOException, ServletException {
 		chain.doFilter(req, rep);
-		HttpServletResponse response = (HttpServletResponse) rep;
 		HttpServletRequest request = (HttpServletRequest) req;
 
-		HttpSession session = request.getSession(true);
-		for (String name : names) {
-			Object val = session.getAttribute(name);
-			if (val != null) {
-				Cookie cookie = new Cookie(name, (String) val);
-				cookie.setPath("/");
-				response.addCookie(cookie);
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			HttpServletResponse response = (HttpServletResponse) rep;
+			for (String name : names) {
+				Object val = session.getAttribute(name);
+				if (val != null) {
+					Cookie cookie = new Cookie(name, (String) val);
+					cookie.setPath("/");
+					response.addCookie(cookie);
+				}
 			}
 		}
-
 	}
 
 	public void setCookieNames(String cookieNames) {

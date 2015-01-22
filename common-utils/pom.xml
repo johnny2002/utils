@@ -94,8 +94,4 @@
 			<artifactId>testng</artifactId>
 		</dependency>
 	</dependencies>
-	<scm>
-		<url>svn://svn.irmp.ibm.com/framework/trunk/framework-common</url>
-		<connection>scm:svn:svn://svn.irmp.ibm.com/framework/trunk/framework-common</connection>
-	</scm>
 </project>

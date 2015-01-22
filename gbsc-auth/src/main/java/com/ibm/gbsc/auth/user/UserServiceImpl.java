@@ -37,11 +37,11 @@ public class UserServiceImpl implements UserService {
 
 	/** {@inheritDoc} */
 	@Override
-	public User getUser(String loginId) {
-		log.debug(loginId);
-		User user = em.find(User.class, loginId);
+	public User getUser(String code) {
+		log.debug(code);
+		User user = em.find(User.class, code);
 		if (user == null) {
-			throw new UserNotFoundException("指定的用户不存在：" + loginId);
+			throw new UserNotFoundException("指定的用户不存在：" + code);
 		}
 		user.getRoles().size();
 		List<Organization> parents = user.getDepartments();

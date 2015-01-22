@@ -120,7 +120,7 @@ public abstract class SearchListBaseController<E, P extends PagedQueryParam> ext
 
 			if (!StringUtils.isEmpty(paramExport)) {
 				queryParam.init();
-				return getExportResultJSP();
+				return getExportResultPage();
 			}
 		}
 
@@ -131,6 +131,14 @@ public abstract class SearchListBaseController<E, P extends PagedQueryParam> ext
 
 		return getListViewName();
 
+	}
+
+	/**
+	 * @return Search Result Page Only. In order to improve performance, better
+	 *         to only include displaytag table.
+	 */
+	protected String getExportResultPage() {
+		return getListViewName();
 	}
 
 	/**
@@ -152,14 +160,5 @@ public abstract class SearchListBaseController<E, P extends PagedQueryParam> ext
 	 * @return string.
 	 */
 	protected abstract String getTableId();
-
-	/**
-	 * @return
-	 *
-	 *         导出excel时跳转的页面,reset page参数
-	 */
-	protected String getExportResultJSP() {
-		return null;
-	}
 
 }

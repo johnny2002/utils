@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 public class DateConverterBase {
 	private final String datePattern = "yyyy-MM-dd";
 	private final String timePattern = "HH:mm:ss";
+	private DateFormat timeFormat = new SimpleDateFormat(timePattern);
 	private DateFormat dateFormat = new SimpleDateFormat(datePattern);
 	private DateFormat dateTimeFormat = new SimpleDateFormat(datePattern + " " + timePattern);
 
@@ -44,6 +45,35 @@ public class DateConverterBase {
 	 */
 	public void setDateTimeFormat(DateFormat dateTimeFormat) {
 		this.dateTimeFormat = dateTimeFormat;
+	}
+
+	/**
+	 * @return the timeFormat
+	 */
+	public DateFormat getTimeFormat() {
+		return timeFormat;
+	}
+
+	/**
+	 * @param timeFormat
+	 *            the timeFormat to set
+	 */
+	public void setTimeFormat(DateFormat timeFormat) {
+		this.timeFormat = timeFormat;
+	}
+
+	/**
+	 * @return the datePattern
+	 */
+	public String getDatePattern() {
+		return datePattern;
+	}
+
+	/**
+	 * @return the timePattern
+	 */
+	public String getTimePattern() {
+		return timePattern;
 	}
 
 }

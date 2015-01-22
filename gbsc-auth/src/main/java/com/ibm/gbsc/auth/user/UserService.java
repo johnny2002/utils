@@ -28,11 +28,11 @@ public interface UserService {
 	List<Role> getAllRoles();
 
 	/**
-	 * @param id
-	 *            id
+	 * @param code
+	 *            user code
 	 * @return user
 	 */
-	User getUser(String id);
+	User getUser(String code);
 
 	/**
 	 * @param param

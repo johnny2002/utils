@@ -36,8 +36,8 @@
 				<prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
 				<prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
 				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
-				<!-- <prop key="hibernate.cache.provider_configuration_file_resource_path">${hibernate.cache.config.path}</prop>
 				<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
+				<!-- <prop key="hibernate.cache.provider_configuration_file_resource_path">${hibernate.cache.config.path}</prop>
 				<prop key="javax.persistence.sharedCache.mode">ENABLE_SELECTIVE</prop> -->
 			</props>
 		</property>

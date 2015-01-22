@@ -4,6 +4,7 @@
 package com.ibm.gbsc.auth.user;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -37,9 +38,17 @@ public class User implements BaseVO, Serializable {
 	private static final long serialVersionUID = 8574148353464532503L;
 	private String code;
 	private String password;
-	private String displayName;
+	private String fullName;
 	private String email;
-	private String userDesc;
+	private Date birthDate;
+	/**
+	 * 分机号码
+	 */
+	private String extNumber;
+	/**
+	 * 手机号码
+	 */
+	private String mobileNumber;
 	private UserState status;
 	private List<Organization> departments;
 	private Set<Role> roles;
@@ -48,7 +57,7 @@ public class User implements BaseVO, Serializable {
 	 * @return the loginId
 	 */
 	@Id
-	@Column(name = "USER_ID")
+	@Column(name = "USER_CODE")
 	public String getCode() {
 		return code;
 	}
@@ -80,23 +89,21 @@ public class User implements BaseVO, Serializable {
 	/**
 	 * @return the name
 	 */
-	@Column(name = "USER_NAME")
-	public String getDisplayName() {
-		return displayName;
+	public String getFullName() {
+		return fullName;
 	}
 
 	/**
 	 * @param name
 	 *            the name to set
 	 */
-	public void setDisplayName(String name) {
-		this.displayName = name;
+	public void setFullName(String name) {
+		this.fullName = name;
 	}
 
 	/**
 	 * @return the email
 	 */
-	@Column(name = "EMAIL")
 	public String getEmail() {
 		return email;
 	}
@@ -212,22 +219,6 @@ public class User implements BaseVO, Serializable {
 	}
 
 	/**
-	 * @return userDesc
-	 */
-	@Column(name = "USER_DESC")
-	public String getUserDesc() {
-		return userDesc;
-	}
-
-	/**
-	 * @param userDesc
-	 *            userDesc
-	 */
-	public void setUserDesc(String userDesc) {
-		this.userDesc = userDesc;
-	}
-
-	/**
 	 * @return the status
 	 */
 	@Enumerated(EnumType.STRING)
@@ -241,6 +232,52 @@ public class User implements BaseVO, Serializable {
 	 */
 	public void setStatus(UserState status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the birthDate
+	 */
+	@Column(columnDefinition = "DATE")
+	public Date getBirthDate() {
+		return birthDate;
+	}
+
+	/**
+	 * @param birthDate
+	 *            the birthDate to set
+	 */
+	public void setBirthDate(Date birthDate) {
+		this.birthDate = birthDate;
+	}
+
+	/**
+	 * @return the mobileNumber
+	 */
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	/**
+	 * @param mobileNumber
+	 *            the mobileNumber to set
+	 */
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	/**
+	 * @return the extNumber
+	 */
+	public String getExtNumber() {
+		return extNumber;
+	}
+
+	/**
+	 * @param extNumber
+	 *            the extNumber to set
+	 */
+	public void setExtNumber(String extNumber) {
+		this.extNumber = extNumber;
 	}
 
 }

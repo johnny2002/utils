@@ -48,7 +48,11 @@
 			<groupId>javax.persistence</groupId>
 			<artifactId>jpa-api</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
 		<!-- spring dependency -->
 		<dependency>
 			<groupId>org.springframework</groupId>

@@ -29,13 +29,12 @@ public class UserListContoller extends SearchListBaseController<User, UserPagedQ
 
 	@Override
 	protected void refData(Model model) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected String getListViewName() {
-		return "user.lookup.tile";
+		return "user.lookup.ftl";
 	}
 
 	@Override

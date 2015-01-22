@@ -16,7 +16,18 @@ public class DateStringConverter extends DateConverterBase implements Converter<
 		if (source == null) {
 			return "";
 		}
-		return getDateFormat().format(source);
+		if (source instanceof java.sql.Date) {
+			return getDateFormat().format(source);
+		}
+		if (source instanceof java.sql.Time) {
+			return getTimeFormat().format(source);
+		}
+		String dtString = getDateTimeFormat().format(source);
+		int indexOfTime = dtString.indexOf(" 00:00:00");
+		if (indexOfTime > 0) {
+			return dtString.substring(0, indexOfTime);
+		}
+		return dtString;
 	}
 
 }
