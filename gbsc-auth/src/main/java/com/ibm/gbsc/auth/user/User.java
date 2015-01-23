@@ -21,6 +21,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import com.ibm.gbsc.common.vo.BaseVO;
 
@@ -58,6 +60,7 @@ public class User implements BaseVO, Serializable {
 	 */
 	@Id
 	@Column(name = "USER_CODE")
+	@NotNull
 	public String getCode() {
 		return code;
 	}
@@ -104,6 +107,7 @@ public class User implements BaseVO, Serializable {
 	/**
 	 * @return the email
 	 */
+	@Pattern(regexp = "^(([a-z0-9]*[-_\\.]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\\.][a-z]{2,3}([\\.][a-z]{1,3})?)?$", message = "auth.valid.email")
 	public String getEmail() {
 		return email;
 	}
@@ -173,7 +177,7 @@ public class User implements BaseVO, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -222,6 +226,7 @@ public class User implements BaseVO, Serializable {
 	 * @return the status
 	 */
 	@Enumerated(EnumType.STRING)
+	@NotNull
 	public UserState getStatus() {
 		return status;
 	}

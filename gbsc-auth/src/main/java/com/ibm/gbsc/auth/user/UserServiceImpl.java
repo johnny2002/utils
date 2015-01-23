@@ -298,4 +298,16 @@ public class UserServiceImpl implements UserService {
 			throw new CurrentPasswdIncorrectException();
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * com.ibm.gbsc.auth.user.UserService#saveUser(com.ibm.gbsc.auth.user.User)
+	 */
+	@Override
+	@Transactional(readOnly = false)
+	public void saveUser(User user) {
+		em.persist(user);
+	}
 }

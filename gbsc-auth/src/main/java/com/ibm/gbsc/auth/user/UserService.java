@@ -50,6 +50,14 @@ public interface UserService {
 	void updateUser(User user);
 
 	/**
+	 * 新增用户
+	 *
+	 * @param user
+	 *            user
+	 */
+	void saveUser(User user);
+
+	/**
 	 * @param userCode
 	 *            the user code
 	 * @param newPasswd

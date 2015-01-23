@@ -112,7 +112,7 @@ public class RoleResourceContoller {
 	        @ModelAttribute("roleList") List<Role> roleList, Model model) {
 		List<Resource> resList = resourceService.getAllResource();
 		Role role = findRole(roleList, roleId);
-		List<RoleResource> roleResources = role.getRoleResList();
+		List<RoleResource> roleResources = null;// role.getRoleResList();
 		ArrayList<String> haveResources = new ArrayList<String>();
 		for (RoleResource roleResource : roleResources) {
 			if (roleResource.getOperationType() == Integer.parseInt(operType)) {
@@ -184,7 +184,7 @@ public class RoleResourceContoller {
 		Role oldRole = findRole(roleList, oldRoleId);
 
 		if (oldRole != null) {
-			List<RoleResource> roleResList = oldRole.getRoleResList();
+			List<RoleResource> roleResList = null;// oldRole.getRoleResList();
 			if (roleResList == null) {
 				roleResList = new ArrayList<RoleResource>();
 			}
@@ -346,7 +346,7 @@ public class RoleResourceContoller {
 	        SessionStatus status) {
 		Role currentRole = findRole(roleList, roleId);
 		if (currentRole != null) {
-			List<RoleResource> roleResList = currentRole.getRoleResList();
+			List<RoleResource> roleResList = null;// currentRole.getRoleResList();
 			if (roleResList == null) {
 				roleResList = new ArrayList<RoleResource>();
 			}
