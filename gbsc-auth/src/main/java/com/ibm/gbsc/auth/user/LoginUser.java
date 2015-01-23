@@ -7,18 +7,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * 当前登录用户信息.
- * 
+ *
  * @author Johnny
  */
 public class LoginUser implements UserDetails {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -1756852420675349892L;
 
-	private User user;
+	private final User user;
 
-	private Collection<Role> authorities;
+	private final Collection<Role> authorities;
 
 	/**
 	 * @param user
@@ -37,7 +37,8 @@ public class LoginUser implements UserDetails {
 	}
 
 	/**
-	 * @param org org
+	 * @param org
+	 *            org
 	 */
 	private void addOrgRoles(Organization org) {
 		if (!org.getRoles().isEmpty()) {
@@ -56,36 +57,43 @@ public class LoginUser implements UserDetails {
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public Collection<Role> getAuthorities() {
 		return authorities;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public String getPassword() {
 		return user.getPassword();
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public String getUsername() {
 		return user.getCode();
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public boolean isAccountNonExpired() {
-		return user.getStatus() != UserState.CANCELED;
+		return user.getStatus() != UserState.CLOSED;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public boolean isAccountNonLocked() {
 		return user.getStatus() != UserState.LOCKED;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public boolean isCredentialsNonExpired() {
-		return user.getStatus() != UserState.CANCELED;
+		return user.getStatus() != UserState.LOCKED;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public boolean isEnabled() {
 		return user.getStatus() == UserState.NORMAL;
 	}

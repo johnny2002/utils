@@ -1,6 +1,5 @@
 package com.ibm.gbsc.auth.user;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -8,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -18,6 +16,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
+
+import com.ibm.gbsc.common.vo.RefBean;
 
 /**
  * Organization object.
@@ -30,13 +30,11 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "Organization.getByLevel", query = "select o from Organization o where o.level = :level order by o.code", hints = { @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
         @NamedQuery(name = "Organization.getByLevelType", query = "select o from Organization o where o.level = :level and o.type = :type order by o.code", hints = { @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
-public class Organization implements Serializable {
+public class Organization extends RefBean {
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 593172425890684180L;
-	private String code;
-	private String name;
 	private String type;
 	private int level;
 	private boolean virtual;
@@ -47,39 +45,6 @@ public class Organization implements Serializable {
 	private Set<User> users;
 
 	// public static String HEAD_NODE_CODE = "001";
-
-	/**
-	 * @return the code
-	 */
-	@Id
-	@Column(name = "ORG_CODE")
-	public String getCode() {
-		return code;
-	}
-
-	/**
-	 * @param code
-	 *            the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	/**
-	 * @return the name
-	 */
-	@Column(name = "ORG_NAME")
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	/**
 	 * @return the level
@@ -215,36 +180,6 @@ public class Organization implements Serializable {
 	 */
 	public void setUsers(Set<User> users) {
 		this.users = users;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Organization other = (Organization) obj;
-		if (code == null) {
-			if (other.code != null) {
-				return false;
-			}
-		} else if (!code.equals(other.code)) {
-			return false;
-		}
-		return true;
 	}
 
 }

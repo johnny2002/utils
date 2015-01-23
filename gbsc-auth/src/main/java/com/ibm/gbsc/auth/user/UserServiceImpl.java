@@ -86,7 +86,14 @@ public class UserServiceImpl implements UserService {
 		// Hibernate.initialize(user.getOrg().getParent());
 		// }
 		// }
-		return null;
+		List<User> users = em.createQuery("from User u", User.class).getResultList();
+		for (User user : users) {
+			user.getDepartments().size();
+		}
+		PagedQueryResult<User> ur = new PagedQueryResult<User>();
+		ur.setRecordCount(users.size());
+		ur.setDatas(users);
+		return ur;
 	}
 
 	/** {@inheritDoc} */

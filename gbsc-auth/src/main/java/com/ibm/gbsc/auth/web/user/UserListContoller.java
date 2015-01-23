@@ -1,6 +1,7 @@
 package com.ibm.gbsc.auth.web.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -14,8 +15,8 @@ import com.ibm.gbsc.web.springmvc.controller.SearchListBaseController;
  * @author yangyz
  *
  */
-// @Controller
-@RequestMapping("/auth/user")
+@Controller
+@RequestMapping("/auth/userlist")
 public class UserListContoller extends SearchListBaseController<User, UserPagedQueryParam> {
 
 	@Autowired
@@ -34,11 +35,11 @@ public class UserListContoller extends SearchListBaseController<User, UserPagedQ
 
 	@Override
 	protected String getListViewName() {
-		return "user.lookup.ftl";
+		return "/auth/user/userSearchList.ftl";
 	}
 
 	@Override
 	protected String getTableId() {
-		return "UserListTable";
+		return "tUser";
 	}
 }
