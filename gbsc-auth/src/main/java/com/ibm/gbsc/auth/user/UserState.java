@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.ibm.gbsc.auth.user;
 
 /**
  * user state defination.
+ * 
  * @author Johnny
  *
  */
@@ -16,7 +17,7 @@ public enum UserState {
 	/**
 	 * 注销.
 	 */
-	CANCELED,
+	CLOSED,
 	/**
 	 * 锁定.
 	 */

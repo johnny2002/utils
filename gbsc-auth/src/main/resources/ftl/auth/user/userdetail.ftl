@@ -1,4 +1,3 @@
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <#assign sf = JspTaglibs["http://www.springframework.org/tags/form"] >
 <#assign c = JspTaglibs["http://java.sun.com/jsp/jstl/core"] >
 <#assign fmt = JspTaglibs["http://java.sun.com/jsp/jstl/fmt"] >
@@ -11,30 +10,31 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <#include RscPage>
 <@fmt.setBundle basename="i18n/auth-messages" />
-<style>
-.errorMessage{color:red}
-.errorClass{color:red}
-</style>
 <script type="text/javascript">
 	function submitForm(theForm){
-		var op = $("#op_mode").val();
+		var sbMethod = window.location.href.indexOf("/new") > 0 ? "POST" : "PUT";
 		$.ajax({
 			url: theForm.action,
-			type: op == "add" ? "POST" : "PUT",
+			type: sbMethod,
 			data: $(theForm).serialize(),
 			success: function( data ) {
-				if(data.responseText){
-					alert('sttt:' + data.responseText);	
-					window.location.reload();
-				} else {
-					alert('erro found');
+				if( typeof(data) == "object"){
+					alert(data.message);
+					if (data.url){
+						window.location.href = data.url;
+					}else{
+						window.location.reload();
+					}
+				} else if (typeof(data) == "string"){
 					document.write(data);
 					document.close();
+				} else {
+					alert(data);
 				}
 			},
 			error: function(msg) {
 				if (msg.responseText){
-					alert('msg:' + msg.responseText);
+					alert('Error:' + msg.responseText);
 				} else {
 					document.write(msg);
 					document.close();
@@ -49,45 +49,40 @@
 </head>
 <body>
 	<form method="post" id="userform">
-<#--input type="hidden" name="_method" value="put"/ -->
-	<input id="op_mode" type="hidden" name="_mode" value="${_mode}"/>
-	<@spring.bind "theUser"/>
-	<@spring.showErrors />
+<#--input type="hidden" name="_method" value="put"/ 
+	<@spring.bind "theUser.*"/>
+	<@spring.showErrors />-->
 		<table class="resultTable">
 			<tr>
 				<td>员工编码</td>
 				<td>
-				<#if _mode == "add">
-				<@spring.formInput path="theUser.code" />
+				<#if _mode == "new">
+				<@spring.formInput path="theUser.code" errors=true/>
 				<#else>
 				<@spring.formHiddenInput path="theUser.code" />${theUser.code}
 				</#if>
 				</td>
 				<td>姓名:</td>
-				<td><@spring.formInput path="theUser.fullName" /></td>
+				<td><@spring.formInput path="theUser.fullName" errors=true/></td>
 			</tr>
 			<tr>
 				<td>分机号码</td>
-				<td><@spring.formInput path="theUser.extNumber" /> </td>
+				<td><@spring.formInput path="theUser.extNumber" errors=true/> </td>
 				<td>手提电话</td>
-				<td><@spring.formInput path="theUser.mobileNumber" /> </td>
+				<td><@spring.formInput path="theUser.mobileNumber" errors=true/> </td>
 			</tr>
 			<tr>
 				<td>生日</td>
-				<td><@spring.formInput path="theUser.birthDate" /> 
+				<td><@spring.formInput path="theUser.birthDate" errors=true/> 
 			 <#--if theUser.birthDate??>${theUser.birthDate?string("yyyy-MM-dd HH:mm:ss")}</#if--> 		
 				</td>
 				<td>状态</td>
-				<td>
-				 <@spring.formInput path="theUser.status" />		
+				<td><@spring.formRadioButtons path="theUser.status" options=UserStates separator="" errors=true/>
 				</td>
 			</tr>
 			<tr>
 				<td>邮件地址</td>
-				<td><@spring.formInput path="theUser.email" /> 
-				
-		<@spring.bind "theUser.email" />  
-    <@spring.showErrors /></td>
+				<td><@spring.formInput path="theUser.email" errors=true/></td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
 			</tr>

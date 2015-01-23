@@ -107,7 +107,7 @@ public class User implements BaseVO, Serializable {
 	/**
 	 * @return the email
 	 */
-	@Pattern(regexp = "^(([a-z0-9]*[-_\\.]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\\.][a-z]{2,3}([\\.][a-z]{1,3})?)?$", message = "auth.valid.email")
+	@Pattern(regexp = "^(([a-z0-9]*[-_\\.]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\\.][a-z]{2,3}([\\.][a-z]{1,3})?)?$", message = "Invalid format.")
 	public String getEmail() {
 		return email;
 	}
@@ -177,7 +177,7 @@ public class User implements BaseVO, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

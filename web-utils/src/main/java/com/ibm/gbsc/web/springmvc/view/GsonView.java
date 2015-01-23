@@ -1,5 +1,6 @@
 package com.ibm.gbsc.web.springmvc.view;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,12 +34,18 @@ public class GsonView extends AbstractView {
 	// private static final String DEFAULT_JSON_CONTENT_TYPE =
 	// "application/json";
 	private String jsonObjectName;
+	private HashMap<String, Object> attributes;
 
 	/**
 	 *
 	 */
 	public GsonView() {
 		super();
+		attributes = new HashMap<String, Object>();
+	}
+
+	public void addAttribute(String key, Object value) {
+		attributes.put(key, value);
 	}
 
 	/**
@@ -71,7 +78,7 @@ public class GsonView extends AbstractView {
 			gsonBuilder.setFieldNamingStrategy(this.fieldNamingStrategy);
 		}
 		Gson gson = gsonBuilder.create();
-		gson.toJson(jsonObjectName == null ? model : model.get(jsonObjectName), response.getWriter());
+		gson.toJson(jsonObjectName == null ? attributes : model.get(jsonObjectName), response.getWriter());
 	}
 
 	/**
@@ -122,7 +129,7 @@ public class GsonView extends AbstractView {
 	 */
 	@Override
 	public String getContentType() {
-		return "text/html;charset=utf-8";
+		return "application/json;charset=utf-8";
 	}
 
 	/**
