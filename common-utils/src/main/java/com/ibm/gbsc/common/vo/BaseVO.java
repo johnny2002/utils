@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 /**
  * @author Johnny
- * 
+ *
  */
-public interface BaseVO {
+public interface BaseVO extends Serializable {
 	/**
 	 * @return Serializable.
 	 */

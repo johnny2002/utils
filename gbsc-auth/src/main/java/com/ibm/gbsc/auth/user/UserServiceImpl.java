@@ -1,5 +1,6 @@
 package com.ibm.gbsc.auth.user;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -8,7 +9,14 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -64,36 +72,53 @@ public class UserServiceImpl implements UserService {
 
 	/** {@inheritDoc} */
 	@Override
-	public PagedQueryResult<User> searchUser(UserPagedQueryParam param) {
-		// Criteria criteria = dao.getSession().createCriteria(User.class);
-		// if (StringUtils.isNotBlank(param.getName())) {
-		// criteria.add(Restrictions.ilike("displayName",
-		// param.getName().trim().toLowerCase(), MatchMode.ANYWHERE));
-		// }
-		// /*
-		// * if (StringUtils.isNotBlank(param.getOrgName())){
-		// * criteria.createAlias("org", "org");
-		// * criteria.createAlias("org.parent", "porg");
-		// * criteria.add(Restrictions.or(Restrictions.ilike("org.name",
-		// * param.getOrgName().trim(), MatchMode.ANYWHERE),
-		// * Restrictions.ilike("porg.name", param.getOrgName().trim(),
-		// * MatchMode.ANYWHERE))); }
-		// */
-		// criteria.addOrder(Order.asc("displayName"));
-		// PagedQueryResult<User> rst = dao.executePagingQuery(criteria, param);
-		// for (User user : rst.getDatas()) {
-		// if (user.getOrg() != null) {
-		// Hibernate.initialize(user.getOrg().getParent());
-		// }
-		// }
-		List<User> users = em.createQuery("from User u", User.class).getResultList();
-		for (User user : users) {
-			user.getDepartments().size();
+	public PagedQueryResult<User> searchUser(UserPagedQueryParam queryParam) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<User> userCtQuery = cb.createQuery(User.class);
+		Root<User> user = userCtQuery.from(User.class);
+		List<Predicate> criteList = new ArrayList<Predicate>();
+		Path<String> pathName = user.get("fullName");
+		if (StringUtils.isNotBlank(queryParam.getName())) {
+			criteList.add(cb.like(pathName, "%" + queryParam.getName().trim().toUpperCase() + "%"));
 		}
-		PagedQueryResult<User> ur = new PagedQueryResult<User>();
-		ur.setRecordCount(users.size());
-		ur.setDatas(users);
-		return ur;
+		Predicate[] predicates = criteList.toArray(new Predicate[criteList.size()]);
+		userCtQuery.orderBy(cb.asc(pathName));
+
+		userCtQuery.where(predicates);
+
+		// PagedQueryResult<User> rst = dao.executePagedQuery(criteria,
+		// criteList, User.class, queryParam);
+		// for (User user : rst.getDatas()) {
+		// if (user.getOrg() != null && user.getOrg().getParent() != null) {
+		// log.debug("Parent Org {}", user.getOrg().getParent().getName());
+		// }
+		// }
+		// 执行主查询
+		TypedQuery<User> pgQuery = em.createQuery(userCtQuery);
+		if (queryParam.getPageNumber() > 1) {
+			pgQuery.setFirstResult((queryParam.getPageNumber() - 1) * queryParam.getPageSize());
+		}
+		int totalResults = 0;
+		pgQuery.setMaxResults(queryParam.getPageSize());
+		// pgQuery.setReadOnly(true);
+		List<User> list = pgQuery.getResultList();
+		if (queryParam.getPageNumber() == 1 && list.size() < queryParam.getPageSize()) {
+			totalResults = list.size();
+
+		} else {
+			// CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+			CriteriaQuery<Long> cqCount = cb.createQuery(Long.class);
+			cqCount.from(User.class);
+			cqCount.select(cb.count(user));
+			cqCount.where(predicates);
+			totalResults = em.createQuery(cqCount).getSingleResult().intValue();
+		}
+		PagedQueryResult<User> result = new PagedQueryResult<User>(totalResults, queryParam.getPageSize(), queryParam.getPageNumber());
+		result.setDatas(list);
+		return result;
+
+		// return rst;
+
 	}
 
 	/** {@inheritDoc} */
@@ -308,7 +333,7 @@ public class UserServiceImpl implements UserService {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * com.ibm.gbsc.auth.user.UserService#saveUser(com.ibm.gbsc.auth.user.User)
 	 */

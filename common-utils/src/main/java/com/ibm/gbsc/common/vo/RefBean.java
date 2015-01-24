@@ -21,7 +21,7 @@ public class RefBean implements BaseVO {
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 8027750231039274104L;
+	private static final long serialVersionUID = -2993123553842359025L;
 	private String code;
 	private String name;
 
@@ -58,7 +58,7 @@ public class RefBean implements BaseVO {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -72,7 +72,7 @@ public class RefBean implements BaseVO {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -99,7 +99,7 @@ public class RefBean implements BaseVO {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.ibm.gbsc.common.vo.BaseVO#getId()
 	 */
 	@Override

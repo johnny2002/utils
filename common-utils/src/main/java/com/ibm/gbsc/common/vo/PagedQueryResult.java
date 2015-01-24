@@ -1,16 +1,22 @@
 package com.ibm.gbsc.common.vo;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 查询结果基类.
- * 
+ *
  * @author Johnny
- * 
+ *
  * @param <T>
  *            要返回的对象类型
  */
-public class PagedQueryResult<T> {
+public class PagedQueryResult<T> implements Serializable {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 3326764337561112775L;
+
 	private List<T> datas;
 
 	private Boolean isLastPage;
@@ -56,7 +62,7 @@ public class PagedQueryResult<T> {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public PagedQueryResult() {
 		super();
@@ -64,7 +70,7 @@ public class PagedQueryResult<T> {
 
 	/**
 	 * 返回的数据集.
-	 * 
+	 *
 	 * @return the datas
 	 */
 	public List<T> getDatas() {
@@ -81,7 +87,7 @@ public class PagedQueryResult<T> {
 
 	/**
 	 * 满足查询条件的总记录数， null 意味着未知。注：只在查询第一页时返回正确的总记录数，其它页码时，返回-1.
-	 * 
+	 *
 	 * @return the totalDataCount
 	 */
 	public Integer getRecordCount() {
@@ -98,7 +104,7 @@ public class PagedQueryResult<T> {
 
 	/**
 	 * 页码,从1开始.
-	 * 
+	 *
 	 * @return the pageNumber
 	 */
 	public int getPageNumber() {
@@ -115,7 +121,7 @@ public class PagedQueryResult<T> {
 
 	/**
 	 * 满足查询条件的总页数， null 意味着未知。注：只在查询第一页时返回正确的总记录数，其它页码时，返回-1.
-	 * 
+	 *
 	 * @return the pageCount
 	 */
 	public Integer getPageCount() {
@@ -132,7 +138,7 @@ public class PagedQueryResult<T> {
 
 	/**
 	 * 每页大小，缺省为10条记录/页.
-	 * 
+	 *
 	 * @return the pageSize
 	 */
 	public int getPageSize() {
@@ -149,7 +155,7 @@ public class PagedQueryResult<T> {
 
 	/**
 	 * 标志是否最后一页，True: 是最后一页，False: 不是，null：未知.
-	 * 
+	 *
 	 * @return the lastPage
 	 */
 	public Boolean getIsLastPage() {
@@ -166,7 +172,7 @@ public class PagedQueryResult<T> {
 
 	/**
 	 * 计算开始数.
-	 * 
+	 *
 	 * @return the indexNumber
 	 */
 	public int getIndexNumber() {

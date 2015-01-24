@@ -4,33 +4,36 @@ import java.io.Serializable;
 
 /**
  * 分页查询参数基类.
- * 
+ *
  * @author Johnny
- * 
+ *
  */
 public abstract class PagedQueryParam implements Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -2198575204083560476L;
 	private int pageNumber = 1;
 	private int pageSize = 10;
 	private String orderBy;
-	private boolean needCount = true;
+	/**
+	 * 记录总数，null表示未知，需要查询时求出总数，非null值表示已经知道总数，无需再次求值
+	 */
+	private Integer recordCount;
 
 	/**
-	 * 
+	 *
 	 */
 	public void init() {
 		pageNumber = 1;
 		pageSize = 10;
 		orderBy = null;
-		needCount = true;
+		recordCount = null;
 	}
 
 	/**
 	 * 要查询的页码，从1开始.
-	 * 
+	 *
 	 * @return the pageNumber
 	 */
 	public int getPageNumber() {
@@ -47,7 +50,7 @@ public abstract class PagedQueryParam implements Serializable {
 
 	/**
 	 * 页面大小，缺省为每页10行.
-	 * 
+	 *
 	 * @return the pageSize
 	 */
 	public int getPageSize() {
@@ -63,23 +66,6 @@ public abstract class PagedQueryParam implements Serializable {
 	}
 
 	/**
-	 * 是否需要返回总记录数.
-	 * 
-	 * @return the needCount
-	 */
-	public boolean isNeedCount() {
-		return needCount;
-	}
-
-	/**
-	 * @param needCount
-	 *            the needCount to set
-	 */
-	public void setNeedCount(boolean needCount) {
-		this.needCount = needCount;
-	}
-
-	/**
 	 * @return string.
 	 */
 	public String getOrderBy() {
@@ -92,5 +78,20 @@ public abstract class PagedQueryParam implements Serializable {
 	 */
 	public void setOrderBy(String orderBy) {
 		this.orderBy = orderBy;
+	}
+
+	/**
+	 * @return the recordCount
+	 */
+	public Integer getRecordCount() {
+		return recordCount;
+	}
+
+	/**
+	 * @param recordCount
+	 *            the recordCount to set
+	 */
+	public void setRecordCount(Integer recordCount) {
+		this.recordCount = recordCount;
 	}
 }

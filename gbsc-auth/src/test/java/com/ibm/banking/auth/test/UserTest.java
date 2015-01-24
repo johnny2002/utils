@@ -15,6 +15,7 @@ import com.ibm.gbsc.auth.function.FunctionService;
 import com.ibm.gbsc.auth.resource.ResourceService;
 import com.ibm.gbsc.auth.user.Organization;
 import com.ibm.gbsc.auth.user.Role;
+import com.ibm.gbsc.auth.user.UserPagedQueryParam;
 import com.ibm.gbsc.auth.user.UserService;
 import com.ibm.gbsc.test.BaseTest;
 
@@ -91,4 +92,10 @@ public class UserTest extends BaseTest {
 		// resourceService.delRoleResByRoleId("RISK_INT_DATA_AGENCY");
 	}
 
+	@Test
+	public void testSearchUser() {
+		UserPagedQueryParam param = new UserPagedQueryParam();
+		param.setName("周");
+		userService.searchUser(param);
+	}
 }

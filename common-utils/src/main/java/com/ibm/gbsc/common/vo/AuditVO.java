@@ -3,7 +3,6 @@
  */
 package com.ibm.gbsc.common.vo;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -17,7 +16,7 @@ import javax.persistence.TemporalType;
  *
  */
 @MappedSuperclass
-public abstract class AuditVO implements Serializable, BaseVO {
+public abstract class AuditVO implements BaseVO {
 	/**
 	 *
 	 */
