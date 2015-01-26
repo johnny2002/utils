@@ -3,7 +3,8 @@
 <#assign c = JspTaglibs["http://java.sun.com/jsp/jstl/core"] >
 <#assign fmt = JspTaglibs["http://java.sun.com/jsp/jstl/fmt"] >
 <#assign disp = JspTaglibs["http://displaytag.sf.net"] >
-	<@disp.table uid="tUser" list=result.datas excludedParams="*" class="resultTable">
+	<@disp.table uid="tUser" list=result.datas excludedParams="*" export=false requestURI="search.htm" partialList=true 
+      size=result.recordCount pagesize=result.pageSize class="resultTable" form="searchListForm" >
 		<@disp.caption>用户列表</@disp.caption>
 		<@disp.column title="用户代码" property="code" />
 		<@disp.column title="用户名称" property="fullName" />

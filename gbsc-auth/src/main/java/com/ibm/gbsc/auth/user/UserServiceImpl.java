@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ibm.gbsc.auth.resource.RoleResource;
+import com.ibm.gbsc.common.dao.JpaDao;
 import com.ibm.gbsc.common.vo.PagedQueryResult;
 
 /**
@@ -34,6 +36,8 @@ public class UserServiceImpl implements UserService {
 	Logger log = LoggerFactory.getLogger(getClass());
 	@PersistenceContext
 	EntityManager em;
+	@Inject
+	JpaDao dao;
 
 	/** {@inheritDoc} */
 	@Override
@@ -75,9 +79,9 @@ public class UserServiceImpl implements UserService {
 	public PagedQueryResult<User> searchUser(UserPagedQueryParam queryParam) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<User> userCtQuery = cb.createQuery(User.class);
-		Root<User> user = userCtQuery.from(User.class);
+		Root<User> userRoot = userCtQuery.from(User.class);
 		List<Predicate> criteList = new ArrayList<Predicate>();
-		Path<String> pathName = user.get("fullName");
+		Path<String> pathName = userRoot.get("fullName");
 		if (StringUtils.isNotBlank(queryParam.getName())) {
 			criteList.add(cb.like(pathName, "%" + queryParam.getName().trim().toUpperCase() + "%"));
 		}
@@ -86,14 +90,26 @@ public class UserServiceImpl implements UserService {
 
 		userCtQuery.where(predicates);
 
-		// PagedQueryResult<User> rst = dao.executePagedQuery(criteria,
-		// criteList, User.class, queryParam);
-		// for (User user : rst.getDatas()) {
-		// if (user.getOrg() != null && user.getOrg().getParent() != null) {
-		// log.debug("Parent Org {}", user.getOrg().getParent().getName());
-		// }
-		// }
-		// 执行主查询
+		PagedQueryResult<User> result = dao.executePagedQuery(em, User.class, queryParam, userCtQuery, predicates);
+		for (User user : result.getDatas()) {
+			user.getDepartments().size();
+		}
+		return result;
+
+		// return rst;
+
+	}
+
+	/**
+	 * @param queryParam
+	 * @param cb
+	 * @param userCtQuery
+	 * @param user
+	 * @param predicates
+	 * @return
+	 */
+	protected PagedQueryResult<User> executePagedQuery(UserPagedQueryParam queryParam, CriteriaBuilder cb, CriteriaQuery<User> userCtQuery,
+	        Root<User> user, Predicate[] predicates) {
 		TypedQuery<User> pgQuery = em.createQuery(userCtQuery);
 		if (queryParam.getPageNumber() > 1) {
 			pgQuery.setFirstResult((queryParam.getPageNumber() - 1) * queryParam.getPageSize());
@@ -116,9 +132,6 @@ public class UserServiceImpl implements UserService {
 		PagedQueryResult<User> result = new PagedQueryResult<User>(totalResults, queryParam.getPageSize(), queryParam.getPageNumber());
 		result.setDatas(list);
 		return result;
-
-		// return rst;
-
 	}
 
 	/** {@inheritDoc} */

@@ -14,6 +14,7 @@
 	<!-- This will ensure that Hibernate or JPA exceptions are automatically translated into Spring's generic DataAccessException hierarchy for 
 		those classes annotated with Repository. For example, see ***DAOImpl. -->
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+	<bean class="com.ibm.gbsc.common.dao.JpaDaoHibernateImpl" />
 
 
 	<!-- JPA Entity Manager Factory -->
