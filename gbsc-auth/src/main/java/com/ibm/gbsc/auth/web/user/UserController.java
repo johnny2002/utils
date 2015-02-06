@@ -30,7 +30,7 @@ import com.ibm.gbsc.web.springmvc.view.GsonView;
  * @author fanjingxuan
  */
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("/auth/users")
 public class UserController {
 	Logger log = LoggerFactory.getLogger(getClass());
 	@Inject
@@ -38,7 +38,7 @@ public class UserController {
 	@Inject
 	MessageSource messageSource;
 
-	@RequestMapping(value = "/users/{userCode}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{userCode}", method = RequestMethod.GET)
 	public String getUserDetail(@PathVariable String userCode, Model model, HttpServletRequest request) {
 		User user;
 		if ("new".equals(userCode)) {
@@ -52,7 +52,7 @@ public class UserController {
 		return "/auth/user/userdetail.ftl";
 	}
 
-	@RequestMapping(value = "/users/{userCode}", method = { RequestMethod.PUT, RequestMethod.POST })
+	@RequestMapping(value = "/{userCode}", method = { RequestMethod.PUT, RequestMethod.POST })
 	public ModelAndView updateUser(@PathVariable String userCode, @ModelAttribute("theUser") @Valid User theUser, BindingResult bResult,
 	        Model model, HttpServletRequest request) {
 		log.debug("Save user: {}", userCode);
@@ -78,14 +78,6 @@ public class UserController {
 			userStatesMap.put(sts.name(), messageSource.getMessage(UserState.class.getName() + "." + sts.name(), null, null));
 		}
 		model.addAttribute("UserStates", userStatesMap);
-	}
-
-	/**
-	 * @return string.
-	 */
-	@RequestMapping(value = "/user/passwd", method = RequestMethod.GET)
-	public String openChangePasswd() {
-		return "/user/changePasswd.jsp";
 	}
 
 }

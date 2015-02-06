@@ -1,4 +1,4 @@
-package com.ibm.gbsc.auth.function;
+package com.ibm.gbsc.auth.resource;
 
 import java.util.HashSet;
 import java.util.List;
@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.ibm.gbsc.auth.user.Role;
 
 /**
  * function service implementation.

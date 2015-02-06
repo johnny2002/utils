@@ -21,7 +21,7 @@ import com.ibm.gbsc.common.vo.BaseVO;
  * @author Johnny@cn.ibm.com 使用说明：
  */
 @Component
-@Transactional
+@Transactional(readOnly = true)
 public class BaseVORetriever {
 	@PersistenceContext
 	EntityManager em;
@@ -36,7 +36,7 @@ public class BaseVORetriever {
 	 * @return t.
 	 */
 	public <T extends BaseVO> T getEntityById(Class<T> clazz, Serializable id) {
-		return em.find(clazz, id);
+		return em.getReference(clazz, id);
 	}
 
 }

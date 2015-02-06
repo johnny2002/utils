@@ -3,41 +3,44 @@
  */
 package com.ibm.gbsc.auth.web.user;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.View;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.FieldNamingStrategy;
-import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
+import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.auth.user.Organization;
 import com.ibm.gbsc.auth.user.UserService;
+import com.ibm.gbsc.web.model.TreeNode;
+import com.ibm.gbsc.web.springmvc.view.GsonView;
 
 /**
  * @author fanjingxuan
  *
  */
 @Controller
-@RequestMapping("/auth/org")
-@SessionAttributes({ "orgList", "theOrg" })
+@RequestMapping("/auth/orgs")
 public class OrgController {
 	Logger log = LoggerFactory.getLogger(getClass());
-	@Autowired
+	@Inject
 	UserService userService;
+	@Inject
+	MessageSource messageSource;
 
 	/**
 	 * 查询出所有的组织结构，并以树的形式展现在页面上.
@@ -46,157 +49,53 @@ public class OrgController {
 	 *            model
 	 * @return page
 	 */
-	@RequestMapping(value = "/org/orgs", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public String showOrgAll(Model model) {
 
 		List<Organization> orgList = userService.getOrgTreeByLevel(1);
 
-		GsonBuilder bld = new GsonBuilder();
-		bld.addSerializationExclusionStrategy(new ExclusionStrategy() {
-
-			@Override
-			public boolean shouldSkipField(FieldAttributes f) {
-
-				return !f.getName().equals("name") && !f.getName().equals("code") && !f.getName().equals("childOrgs")
-				        && !f.getName().equals("level");
-			}
-
-			@Override
-			public boolean shouldSkipClass(Class<?> clazz) {
-				return false;
-			}
-		});
-
-		bld.setFieldNamingStrategy(new FieldNamingStrategy() {
-
-			@Override
-			public String translateName(Field f) {
-				if (f.getName().equals("childOrgs")) {
-					return "children";
-				}
-				return f.getName();
-			}
-
-		});
-		model.addAttribute("orgTreeJson", bld.create().toJson(orgList));
+		model.addAttribute("orgTreeJson", new Gson().toJson(toTreeNodes(orgList)));
 		model.addAttribute("orgList", orgList);
-		return "org.tile";
+		return "/auth/user/orgTree.ftl";
 	}
 
-	/**
-	 * 展示当前选中的组织结构信息.
-	 *
-	 * @param orgCode
-	 *            org code
-	 * @param orgList
-	 *            org list
-	 * @param model
-	 *            model
-	 * @return page
-	 */
-	@RequestMapping(value = "/org/orgs/{orgCode}", method = RequestMethod.GET)
-	public String showOrgDetail(@PathVariable String orgCode, @ModelAttribute("orgList") List<Organization> orgList, Model model) {
-		return gotoOrgDetail(orgCode, orgList, model);
-	}
-
-	/**
-	 * @param orgCode
-	 *            ord code
-	 * @param orgList
-	 *            org list
-	 * @param model
-	 *            model
-	 * @return page
-	 */
-	private String gotoOrgDetail(String orgCode, List<Organization> orgList, Model model) {
-		Organization theOrg = findOrg(orgList, orgCode);
-		model.addAttribute("theOrg", theOrg);
-		return "/org/orgDetail.jsp";
-	}
-
-	/**
-	 * @param orgList
-	 *            org list
-	 * @param orgCode
-	 *            org code
-	 * @return the org.
-	 */
-	private Organization findOrg(List<Organization> orgList, String orgCode) {
-		Organization theOrg = null;
-		for (Organization org : orgList) {
-			if (orgCode.equals(org.getCode())) {
-				theOrg = org;
-				break;
-			} else if (org.getChildOrgs() != null && !org.getChildOrgs().isEmpty()) {
-				theOrg = findOrg(org.getChildOrgs(), orgCode);
-				if (theOrg != null) {
-					break;
-				}
+	private List<TreeNode> toTreeNodes(List<Organization> orgs) {
+		ArrayList<TreeNode> nodes = new ArrayList<TreeNode>(orgs.size());
+		for (Organization org : orgs) {
+			TreeNode node = new TreeNode();
+			nodes.add(node);
+			node.setId(org.getCode());
+			node.setName(org.getName());
+			// node.setUrl("orgs/" + org.getCode() + "/roles");
+			// node.setOnclick("return openOrgRoles('" + org.getCode() + "');");
+			if (!(org.getChildren() == null || org.getChildren().isEmpty())) {
+				node.setChildren(toTreeNodes(org.getChildren()));
 			}
 		}
-		return theOrg;
+		return nodes;
 	}
 
-	/**
-	 * @param theOrg
-	 *            org
-	 * @param orgList
-	 *            org list
-	 * @param status
-	 *            status
-	 * @return page
-	 */
-	@RequestMapping(value = "/org/saveOrg", method = RequestMethod.POST)
-	public String saveOrgChange(@ModelAttribute("theOrg") Organization theOrg, @ModelAttribute("orgList") List<Organization> orgList,
-	        SessionStatus status) {
-
-		userService.updateOrganization(theOrg);
-		status.setComplete();
-		return "redirect:/auth/org/orgs.htm";
-	}
-
-	/**
-	 * @param orgName
-	 *            org name
-	 * @param parentOrgCode
-	 *            parent org code
-	 * @param model
-	 *            model
-	 * @return page
-	 */
-	@RequestMapping(value = "/org/initNewOrg")
-	public String initNewOrg(@RequestParam String orgName, @RequestParam String parentOrgCode, Model model) {
-		Organization newOrg = new Organization();
-		Organization parentOrg = userService.getOrganization(parentOrgCode);
-		newOrg.setName(orgName);
-		newOrg.setCode(parentOrgCode + "000");
-		newOrg.setNodeCode(parentOrg.getNodeCode());
-		newOrg.setLevel(parentOrg.getLevel() + 1);
-		newOrg.setParent(parentOrg);
-		newOrg.setType(parentOrg.getType());
-		model.addAttribute("theOrg", newOrg);
-		return "/org/addOrg.jsp";
-	}
-
-	/**
-	 * @param orgCode
-	 *            org code
-	 * @param model
-	 *            model
-	 * @return response
-	 */
-	@RequestMapping(value = "/org/checkOrg", method = RequestMethod.POST)
-	@ResponseBody
-	public String checkOrg(@RequestParam String orgCode, Model model) {
-
-		Organization org = userService.getOrganization(orgCode);
-		if (org == null) {
-			return "allow";
+	@RequestMapping(value = "/{orgCode}/roles", method = RequestMethod.GET)
+	public String showOrgRoles(@PathVariable String orgCode, Model model) {
+		Organization org = userService.getOrganization(orgCode, true, false, false);
+		model.addAttribute("org", org);
+		List<Role> roles = userService.getAllRoles();
+		Map<String, String> rolesMap = new TreeMap<String, String>();
+		for (Role role : roles) {
+			rolesMap.put(role.getCode(), role.getName());
 		}
-		if (org.getUsers() != null && !org.getUsers().isEmpty()) {
-			return "haveUsers";
-		}
-		return "allow";
+		model.addAttribute("roles", rolesMap);
+		return "/auth/user/orgRole.ftl";
+	}
+
+	@RequestMapping(value = "/{orgCode}", method = RequestMethod.PUT)
+	public View saveOrgRoles(@PathVariable String orgCode, @ModelAttribute("org") Organization org, BindingResult bResult, Model model) {
+		Organization oldOrg = userService.getOrganization(orgCode, true, false, false);
+		oldOrg.setRoles(org.getRoles());
+		userService.saveOrganzation(oldOrg);
+		GsonView vw = new GsonView();
+		vw.addAttribute("message", messageSource.getMessage("auth.org.savedOK", new Object[] { orgCode }, null));
+		return vw;
 	}
 
 	/**
@@ -206,9 +105,8 @@ public class OrgController {
 	 *            model
 	 * @return page
 	 */
-	@RequestMapping(value = "/org/delOrg", method = RequestMethod.POST)
-	@ResponseBody
-	public String delOrg(@RequestParam String orgCode, Model model) {
+	@RequestMapping(value = "/{orgCode}", method = RequestMethod.DELETE)
+	public String delOrg(@PathVariable String orgCode, Model model) {
 		userService.delOrganization(orgCode);
 		return "success";
 	}

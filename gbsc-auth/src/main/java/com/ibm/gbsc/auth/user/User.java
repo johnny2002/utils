@@ -24,6 +24,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.common.vo.BaseVO;
 
 /**

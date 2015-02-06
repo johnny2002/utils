@@ -11,39 +11,8 @@
 <#include RscPage>
 <@fmt.setBundle basename="i18n/auth-messages" />
 <script type="text/javascript">
-	function submitForm(theForm){
-		var sbMethod = window.location.href.indexOf("/new") > 0 ? "POST" : "PUT";
-		$.ajax({
-			url: theForm.action,
-			type: sbMethod,
-			data: $(theForm).serialize(),
-			success: function( data ) {
-				if( typeof(data) == "object"){
-					alert(data.message);
-					if (data.url){
-						window.location.href = data.url;
-					}else{
-						window.location.reload();
-					}
-				} else if (typeof(data) == "string"){
-					document.write(data);
-					document.close();
-				} else {
-					alert(data);
-				}
-			},
-			error: function(msg) {
-				if (msg.responseText){
-					alert('Error:' + msg.responseText);
-				} else {
-					document.write(msg);
-					document.close();
-				}
-			}
-			
-		});
-		return false;
-	}
+	var sbMethod = window.location.href.indexOf("/new") > 0 ? "POST" : "PUT";
+	submitForm(theForm, sbMethod);
 </script>
 
 </head>

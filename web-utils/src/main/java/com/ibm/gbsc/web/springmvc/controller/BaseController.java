@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.InitBinder;
  */
 public abstract class BaseController {
 
-	@Autowired
+	@Inject
 	MessageSource messageSource;
 
 	protected Logger log = LoggerFactory.getLogger(this.getClass());

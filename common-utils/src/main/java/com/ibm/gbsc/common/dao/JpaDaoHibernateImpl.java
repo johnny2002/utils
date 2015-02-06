@@ -19,7 +19,7 @@ import javax.persistence.TypedQuery;
 public class JpaDaoHibernateImpl extends JpaDaoImpl {
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * com.ibm.gbsc.common.dao.JpaDao#executeQuery(javax.persistence.TypedQuery,
 	 * boolean, boolean)
@@ -39,5 +39,17 @@ public class JpaDaoHibernateImpl extends JpaDaoImpl {
 	public BigDecimal getNextId(EntityManager em) {
 		return (BigDecimal) em.createNativeQuery("select hibernate_sequence.nextval from dual").getSingleResult();
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ibm.gbsc.common.dao.JpaDao#executeReadonlyQuery(javax.persistence
+	 * .TypedQuery)
+	 */
+	@Override
+	public <T> List<T> executeReadonlyQuery(TypedQuery<T> query) {
+		return executeQuery(query, true, false);
 	}
 }

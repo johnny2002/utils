@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 
+import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.common.vo.RefBean;
 
 /**
@@ -40,7 +41,7 @@ public class Organization extends RefBean {
 	private boolean virtual;
 	private String nodeCode;
 	private Organization parent;
-	private List<Organization> childOrgs;
+	private List<Organization> children;
 	private Set<Role> roles;
 	private Set<User> users;
 
@@ -130,23 +131,21 @@ public class Organization extends RefBean {
 	}
 
 	/**
-	 * @return the childOrgs
+	 * @return the children
 	 */
 
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.LAZY)
-	// @Filter(name="filterChildOrg",
-	// condition=" (parent_org_id = '73' or  org_name like '%风险%' or org_name like '%客户%') ")
-	public List<Organization> getChildOrgs() {
-		return childOrgs;
+	public List<Organization> getChildren() {
+		return children;
 	}
 
 	/**
-	 * @param childOrgs
-	 *            the childOrgs to set
+	 * @param children
+	 *            the children to set
 	 */
 
-	public void setChildOrgs(List<Organization> childOrgs) {
-		this.childOrgs = childOrgs;
+	public void setChildren(List<Organization> childOrgs) {
+		this.children = childOrgs;
 	}
 
 	/**

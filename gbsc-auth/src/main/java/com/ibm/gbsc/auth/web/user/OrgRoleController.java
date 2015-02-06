@@ -3,9 +3,10 @@ package com.ibm.gbsc.auth.web.user;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,12 +32,12 @@ import com.ibm.gbsc.auth.user.UserService;
 @SessionAttributes({ "orgList", "theOrg" })
 public class OrgRoleController {
 	Logger log = LoggerFactory.getLogger(getClass());
-	@Autowired
+	@Inject
 	UserService userService;
 
 	/**
 	 * 访问时，加载所有的角色信息.
-	 * 
+	 *
 	 * @param model
 	 *            model
 	 */
@@ -60,8 +61,9 @@ public class OrgRoleController {
 
 	/**
 	 * 查询出所有的组织结构，并以树的形式展现在页面上.
-	 * 
-	 * @param model model
+	 *
+	 * @param model
+	 *            model
 	 * @return page
 	 */
 	@RequestMapping(value = "/orgrole/orgs", method = RequestMethod.GET)
@@ -72,11 +74,14 @@ public class OrgRoleController {
 		GsonBuilder bld = new GsonBuilder();
 		bld.addSerializationExclusionStrategy(new ExclusionStrategy() {
 
+			@Override
 			public boolean shouldSkipField(FieldAttributes f) {
 
-				return !f.getName().equals("name") && !f.getName().equals("code") && !f.getName().equals("childOrgs") && !f.getName().equals("level");
+				return !f.getName().equals("name") && !f.getName().equals("code") && !f.getName().equals("childOrgs")
+				        && !f.getName().equals("level");
 			}
 
+			@Override
 			public boolean shouldSkipClass(Class<?> clazz) {
 				return false;
 			}
@@ -84,6 +89,7 @@ public class OrgRoleController {
 
 		bld.setFieldNamingStrategy(new FieldNamingStrategy() {
 
+			@Override
 			public String translateName(Field f) {
 				if (f.getName().equals("childOrgs")) {
 					return "children";
@@ -100,10 +106,13 @@ public class OrgRoleController {
 
 	/**
 	 * 展示当前选中的组织结构信息.
-	 * 
-	 * @param orgCode code
-	 * @param orgList list of org
-	 * @param model model
+	 *
+	 * @param orgCode
+	 *            code
+	 * @param orgList
+	 *            list of org
+	 * @param model
+	 *            model
 	 * @return page
 	 */
 	@RequestMapping(value = "/orgrole/orgs/{orgCode}", method = RequestMethod.GET)
@@ -112,9 +121,12 @@ public class OrgRoleController {
 	}
 
 	/**
-	 * @param orgCode orgCode.
-	 * @param orgList orgList.
-	 * @param model model.
+	 * @param orgCode
+	 *            orgCode.
+	 * @param orgList
+	 *            orgList.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
 	private String gotoOrgDetail(String orgCode, List<Organization> orgList, Model model) {
@@ -124,8 +136,10 @@ public class OrgRoleController {
 	}
 
 	/**
-	 * @param orgList orgList.
-	 * @param orgCode orgCode.
+	 * @param orgList
+	 *            orgList.
+	 * @param orgCode
+	 *            orgCode.
 	 * @return organization is system dictionary.
 	 */
 	private Organization findOrg(List<Organization> orgList, String orgCode) {
@@ -134,8 +148,8 @@ public class OrgRoleController {
 			if (orgCode.equals(org.getCode())) {
 				theOrg = org;
 				break;
-			} else if (org.getChildOrgs() != null && !org.getChildOrgs().isEmpty()) {
-				theOrg = findOrg(org.getChildOrgs(), orgCode);
+			} else if (org.getChildren() != null && !org.getChildren().isEmpty()) {
+				theOrg = findOrg(org.getChildren(), orgCode);
 				if (theOrg != null) {
 					break;
 				}
@@ -145,28 +159,35 @@ public class OrgRoleController {
 	}
 
 	/**
-	 * @param orgCode orgCode.
-	 * @param theOrg theOrg.
-	 * @param orgList orgList.
-	 * @param model model.
+	 * @param orgCode
+	 *            orgCode.
+	 * @param theOrg
+	 *            theOrg.
+	 * @param orgList
+	 *            orgList.
+	 * @param model
+	 *            model.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/orgrole/cacheOrg", method = RequestMethod.POST)
 	public String cacheOrgChange(@RequestParam String orgCode, @ModelAttribute("theOrg") Organization theOrg,
-			@ModelAttribute("orgList") List<Organization> orgList, Model model) {
+	        @ModelAttribute("orgList") List<Organization> orgList, Model model) {
 		log.debug("cacheOrg method");
 		return gotoOrgDetail(orgCode, orgList, model);
 	}
 
 	/**
-	 * @param theOrg theOrg.
-	 * @param orgList orgList.
-	 * @param status status.
+	 * @param theOrg
+	 *            theOrg.
+	 * @param orgList
+	 *            orgList.
+	 * @param status
+	 *            status.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/orgrole/saveOrg", method = RequestMethod.POST)
 	public String saveOrgChange(@ModelAttribute("theOrg") Organization theOrg, @ModelAttribute("orgList") List<Organization> orgList,
-			SessionStatus status) {
+	        SessionStatus status) {
 
 		userService.saveOrgTree(orgList);
 		status.setComplete();
@@ -174,8 +195,10 @@ public class OrgRoleController {
 	}
 
 	/**
-	 * @param model model.
-	 * @param status status.
+	 * @param model
+	 *            model.
+	 * @param status
+	 *            status.
 	 * @return string.
 	 */
 	@RequestMapping(value = "/orgrole/cancelOrg", method = RequestMethod.GET)

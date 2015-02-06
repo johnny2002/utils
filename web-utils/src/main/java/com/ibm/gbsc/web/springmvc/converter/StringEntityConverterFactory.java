@@ -1,6 +1,7 @@
 package com.ibm.gbsc.web.springmvc.converter;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
+
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 
@@ -14,7 +15,7 @@ import com.ibm.gbsc.common.vo.BaseVO;
  *
  */
 public class StringEntityConverterFactory implements ConverterFactory<String, BaseVO> {
-	@Autowired
+	@Inject
 	BaseVORetriever voRetriever;
 
 	/** {@inheritDoc} */

@@ -4,27 +4,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
+
 import org.testng.annotations.Test;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.GsonBuilder;
-import com.ibm.gbsc.auth.function.Function;
-import com.ibm.gbsc.auth.function.FunctionService;
+import com.ibm.gbsc.auth.resource.Function;
+import com.ibm.gbsc.auth.resource.FunctionService;
 import com.ibm.gbsc.auth.resource.ResourceService;
+import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.auth.user.Organization;
-import com.ibm.gbsc.auth.user.Role;
 import com.ibm.gbsc.auth.user.UserPagedQueryParam;
 import com.ibm.gbsc.auth.user.UserService;
 import com.ibm.gbsc.test.BaseTest;
 
 public class UserTest extends BaseTest {
-	@Autowired
+	@Inject
 	ResourceService resourceService;
-	@Autowired
+	@Inject
 	UserService userService;
-	@Autowired
+	@Inject
 	FunctionService fs;
 
 	@Test
@@ -52,7 +53,7 @@ public class UserTest extends BaseTest {
 	@Test
 	public void testGetNodes() {
 		List<Organization> orgs = userService.getOrgTreeByLevel(1);
-		for (Organization org : orgs.get(0).getChildOrgs()) {
+		for (Organization org : orgs.get(0).getChildren()) {
 			System.out.println(org.getCode() + org.getName() + org.getNodeCode());
 		}
 	}
@@ -96,6 +97,7 @@ public class UserTest extends BaseTest {
 	public void testSearchUser() {
 		UserPagedQueryParam param = new UserPagedQueryParam();
 		param.setName("周");
+		param.setOrgName("风险");
 		userService.searchUser(param);
 	}
 }

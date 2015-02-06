@@ -2,9 +2,7 @@ package com.ibm.gbsc.auth.user;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -13,7 +11,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -23,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ibm.gbsc.auth.resource.RoleResource;
+import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.common.dao.JpaDao;
 import com.ibm.gbsc.common.vo.PagedQueryResult;
 
@@ -80,13 +78,17 @@ public class UserServiceImpl implements UserService {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<User> userCtQuery = cb.createQuery(User.class);
 		Root<User> userRoot = userCtQuery.from(User.class);
+		// userRoot.alias("u");
 		List<Predicate> criteList = new ArrayList<Predicate>();
-		Path<String> pathName = userRoot.get("fullName");
 		if (StringUtils.isNotBlank(queryParam.getName())) {
-			criteList.add(cb.like(pathName, "%" + queryParam.getName().trim().toUpperCase() + "%"));
+			criteList.add(cb.like(userRoot.<String> get("fullName"), "%" + queryParam.getName().trim().toUpperCase() + "%"));
+		}
+		if (StringUtils.isNotBlank(queryParam.getOrgName())) {
+			Join<User, Organization> dep = userRoot.join("departments");
+			criteList.add(cb.like(dep.<String> get("name"), "%" + queryParam.getOrgName().toUpperCase() + "%"));
 		}
 		Predicate[] predicates = criteList.toArray(new Predicate[criteList.size()]);
-		userCtQuery.orderBy(cb.asc(pathName));
+		userCtQuery.orderBy(cb.asc(userRoot.<String> get("fullName")));
 
 		userCtQuery.where(predicates);
 
@@ -98,40 +100,6 @@ public class UserServiceImpl implements UserService {
 
 		// return rst;
 
-	}
-
-	/**
-	 * @param queryParam
-	 * @param cb
-	 * @param userCtQuery
-	 * @param user
-	 * @param predicates
-	 * @return
-	 */
-	protected PagedQueryResult<User> executePagedQuery(UserPagedQueryParam queryParam, CriteriaBuilder cb, CriteriaQuery<User> userCtQuery,
-	        Root<User> user, Predicate[] predicates) {
-		TypedQuery<User> pgQuery = em.createQuery(userCtQuery);
-		if (queryParam.getPageNumber() > 1) {
-			pgQuery.setFirstResult((queryParam.getPageNumber() - 1) * queryParam.getPageSize());
-		}
-		int totalResults = 0;
-		pgQuery.setMaxResults(queryParam.getPageSize());
-		// pgQuery.setReadOnly(true);
-		List<User> list = pgQuery.getResultList();
-		if (queryParam.getPageNumber() == 1 && list.size() < queryParam.getPageSize()) {
-			totalResults = list.size();
-
-		} else {
-			// CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-			CriteriaQuery<Long> cqCount = cb.createQuery(Long.class);
-			cqCount.from(User.class);
-			cqCount.select(cb.count(user));
-			cqCount.where(predicates);
-			totalResults = em.createQuery(cqCount).getSingleResult().intValue();
-		}
-		PagedQueryResult<User> result = new PagedQueryResult<User>(totalResults, queryParam.getPageSize(), queryParam.getPageNumber());
-		result.setDatas(list);
-		return result;
 	}
 
 	/** {@inheritDoc} */
@@ -148,10 +116,9 @@ public class UserServiceImpl implements UserService {
 	/** {@inheritDoc} */
 	@Override
 	public List<Organization> getOrgTreeByLevel(int level) {
-		Query queryOrgByLevelType = em.createNamedQuery("Organization.getByLevel");
+		TypedQuery<Organization> queryOrgByLevelType = em.createNamedQuery("Organization.getByLevel", Organization.class);
 		queryOrgByLevelType.setParameter("level", level);
-		@SuppressWarnings("unchecked")
-		List<Organization> list = queryOrgByLevelType.getResultList();
+		List<Organization> list = dao.executeQuery(queryOrgByLevelType, true, false);
 		initOrgList(list);
 		return list;
 
@@ -164,7 +131,7 @@ public class UserServiceImpl implements UserService {
 	private void initOrgList(List<Organization> orgs) {
 		for (Organization org : orgs) {
 			org.getRoles().size();
-			initOrgList(org.getChildOrgs());
+			initOrgList(org.getChildren());
 		}
 
 	}
@@ -172,50 +139,11 @@ public class UserServiceImpl implements UserService {
 	/** {@inheritDoc} */
 	@Override
 	public List<Organization> getOrganizationByLevelType(int level, String type) {
-		Query queryOrgByLevelType = em.createNamedQuery("Organization.getByLevelType");
+		TypedQuery<Organization> queryOrgByLevelType = em.createNamedQuery("Organization.getByLevelType", Organization.class);
 		queryOrgByLevelType.setParameter("level", level);
 		queryOrgByLevelType.setParameter("type", type);
-		@SuppressWarnings("unchecked")
-		List<Organization> list = queryOrgByLevelType.getResultList();
+		List<Organization> list = dao.executeReadonlyQuery(queryOrgByLevelType);
 		return list;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	@Transactional(readOnly = false)
-	public void saveOrgTree(List<Organization> orgList) {
-		handleSaveOrgTree(orgList);
-	}
-
-	/**
-	 * @param orgList
-	 *            org list
-	 */
-	private void handleSaveOrgTree(List<Organization> orgList) {
-		List<Organization> childOrgs = null;
-
-		for (Organization org : orgList) {
-			childOrgs = org.getChildOrgs();
-			if (childOrgs != null && !childOrgs.isEmpty()) {
-
-				// 递归保存
-				handleSaveOrgTree(childOrgs);
-
-				if (org.getRoles() == null) {
-					org.setRoles(new HashSet<Role>());
-				}
-				// Set<Role> childRole = null;
-				// // 把子组织结构的权限加到父组织机构上
-				// for (Organization childOrg : childOrgs) {
-				// childRole = childOrg.getRoles();
-				// if (null != childRole && !childRole.isEmpty()) {
-				// org.getRoles().addAll(childRole);
-				// }
-				// }
-			}
-
-			em.merge(org);
-		}
 	}
 
 	/** {@inheritDoc} */
@@ -233,7 +161,7 @@ public class UserServiceImpl implements UserService {
 	 * @param users
 	 *            users
 	 */
-	private void initUsers(List<User> users) {
+	private void initUsers(Collection<User> users) {
 		for (User user : users) {
 			user.getDepartments().size();
 		}
@@ -241,12 +169,19 @@ public class UserServiceImpl implements UserService {
 
 	/** {@inheritDoc} */
 	@Override
-	public Organization getOrganization(String orgCode) {
+	public Organization getOrganization(String orgCode, boolean loadRoles, boolean loadUsers, boolean loadChildren) {
 		Organization org = em.find(Organization.class, orgCode);
-		org.getRoles().size();
-		org.getChildOrgs().size();
-		Set<User> users = org.getUsers();
-		initUsers(users);
+		if (loadRoles) {
+			org.getRoles().size();
+		}
+		if (loadChildren) {
+			org.getChildren().size();
+		}
+
+		if (loadUsers) {
+			Collection<User> users = org.getUsers();
+			initUsers(users);
+		}
 		return org;
 	}
 
@@ -255,16 +190,6 @@ public class UserServiceImpl implements UserService {
 		Organization org = em.find(Organization.class, orgCode);
 		return org;
 
-	}
-
-	/**
-	 * @param users
-	 *            users
-	 */
-	private void initUsers(Set<User> users) {
-		for (User user : users) {
-			user.getDepartments().size();
-		}
 	}
 
 	/** {@inheritDoc} */
@@ -281,7 +206,7 @@ public class UserServiceImpl implements UserService {
 		Organization org = em.find(Organization.class, orgCode);
 		Organization parent = org.getParent();
 		if (parent != null) {
-			parent.getChildOrgs().remove(org);
+			parent.getChildren().remove(org);
 		}
 		em.remove(org);
 	}
@@ -301,38 +226,6 @@ public class UserServiceImpl implements UserService {
 		em.remove(role);
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public Set<String> getResource(LoginUser loginUser, String resourceType) {
-		Collection<Role> roleSet = loginUser.getAuthorities();
-		String[] roleIds = new String[roleSet.size()];
-		int i = 0;
-		for (Role rl : roleSet) {
-			roleIds[i++] = rl.getAuthority();
-		}
-		List<RoleResource> roleResList = em.createNamedQuery("RoleResource.getByRoles", RoleResource.class).setParameter("roles", roleIds)
-		        .setParameter("type", resourceType).getResultList();
-		Set<String> resSet = new HashSet<String>();
-		for (RoleResource roleRes : roleResList) {
-			resSet.add(roleRes.getResource().getResourceId());
-		}
-		// for (Role role : roleSet) {
-		// role = (Role) em.find((Role.class, role.getId());
-		// Hibernate.initialize(role.getRoleResList());
-		// roleResList = role.getRoleResList();
-		// if (roleResList != null) {
-		// for (RoleResource roleRes : roleResList) {
-		// if (resourceType.equals(roleRes.getResource().getResourceType()) &&
-		// roleRes.getOperationType() >= operType) {
-		// resSet.add(roleRes.getResource().getResourceId());
-		// }
-		// }
-		// }
-		// }
-
-		return resSet;
-	}
-
 	@Override
 	@Transactional(readOnly = false)
 	public void updateUserPassword(String userCode, String newPasswd, String oldPassword) {
@@ -346,7 +239,7 @@ public class UserServiceImpl implements UserService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.ibm.gbsc.auth.user.UserService#saveUser(com.ibm.gbsc.auth.user.User)
 	 */
@@ -354,5 +247,19 @@ public class UserServiceImpl implements UserService {
 	@Transactional(readOnly = false)
 	public void saveUser(User user) {
 		em.persist(user);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * com.ibm.gbsc.auth.user.UserService#saveOrganzation(com.ibm.gbsc.auth.
+	 * user.Organization)
+	 */
+	@Override
+	@Transactional(readOnly = false)
+	public void saveOrganzation(Organization org) {
+		em.merge(org);
+
 	}
 }

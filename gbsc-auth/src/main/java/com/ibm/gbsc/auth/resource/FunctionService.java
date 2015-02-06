@@ -1,4 +1,4 @@
-package com.ibm.gbsc.auth.function;
+package com.ibm.gbsc.auth.resource;
 
 import java.util.List;
 

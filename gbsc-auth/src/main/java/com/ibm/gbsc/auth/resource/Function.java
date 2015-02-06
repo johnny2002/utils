@@ -1,13 +1,11 @@
-package com.ibm.gbsc.auth.function;
+package com.ibm.gbsc.auth.resource;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -19,8 +17,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 
-import com.ibm.gbsc.auth.user.Role;
-import com.ibm.gbsc.common.vo.BaseVO;
+import com.ibm.gbsc.common.vo.RefBean;
 
 /**
  * 功能.
@@ -39,12 +36,11 @@ import com.ibm.gbsc.common.vo.BaseVO;
         @NamedQuery(name = "Function.getMenu", query = "select menu from Function menu where menu.menu = true and menu.parent is null and menu.active = true order by menu.seq", hints = {
                 @QueryHint(name = "org.hibernate.readOnly", value = "true"), @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 @Cacheable
-public class Function implements BaseVO, Serializable {
+public class Function extends RefBean {
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 6307803926228004030L;
-	private String id;
 	/**
 	 * 是否菜单
 	 */
@@ -53,10 +49,6 @@ public class Function implements BaseVO, Serializable {
 	 * 是否顶部tab
 	 */
 	private boolean top;
-	/**
-	 * 功能名称
-	 */
-	private String name;
 	/**
 	 * 功能URL，主要用于菜单
 	 */
@@ -90,39 +82,6 @@ public class Function implements BaseVO, Serializable {
 	private Function parent;
 	private List<Function> children;
 	private Set<Role> roles;
-
-	/**
-	 * @return the id
-	 */
-	@Override
-	@Id
-	@Column(length = 20)
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param menuName
-	 *            menu name
-	 */
-	public void setName(String menuName) {
-		this.name = menuName;
-	}
 
 	/**
 	 * @return the url
@@ -210,7 +169,7 @@ public class Function implements BaseVO, Serializable {
 	 * @return the roles
 	 */
 	@ManyToMany
-	@JoinTable(name = "GBSC_AUTH_FUNC_ROLE", joinColumns = { @JoinColumn(name = "FUNC_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") })
+	@JoinTable(name = "GBSC_AUTH_FUNC_ROLE", joinColumns = { @JoinColumn(name = "FUNC_CODE") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_CODE") })
 	public Set<Role> getRoles() {
 		return roles;
 	}
@@ -282,36 +241,6 @@ public class Function implements BaseVO, Serializable {
 	 */
 	public void setMenuCss(String menuCss) {
 		this.menuCss = menuCss;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Function other = (Function) obj;
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		return true;
 	}
 
 	/**

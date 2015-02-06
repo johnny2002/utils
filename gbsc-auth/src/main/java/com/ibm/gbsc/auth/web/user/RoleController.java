@@ -3,7 +3,8 @@
  */
 package com.ibm.gbsc.auth.web.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.ibm.gbsc.auth.user.Role;
+import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.auth.user.UserService;
 
 /**
@@ -21,7 +22,7 @@ import com.ibm.gbsc.auth.user.UserService;
 @Controller
 @RequestMapping("/auth")
 public class RoleController {
-	@Autowired
+	@Inject
 	UserService userService;
 
 	/**

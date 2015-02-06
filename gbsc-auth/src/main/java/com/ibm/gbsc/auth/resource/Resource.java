@@ -3,30 +3,28 @@
  */
 package com.ibm.gbsc.auth.resource;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.QueryHint;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import com.ibm.gbsc.common.vo.RefBean;
 
 /**
  * @author fanjingxuan
  */
 @Entity
-@Table(name = "RI_NV_AUTH_RESOURCE")
-@NamedQueries({ @NamedQuery(name = "Resource.getAll", query = "From Resource r where r.parentRes is null order by r.resourceType", hints = {
-        @QueryHint(name = "org.hibernate.readOnly", value = "true"), @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
-public class Resource implements Serializable {
+@Table(name = "GBSC_AUTH_RESOURCE")
+@NamedQueries({ @NamedQuery(name = "Resource.getAll", query = "From Resource r where r.parent is null order by r.type") })
+public class Resource extends RefBean {
 	/**
 	 * 报表索引.
 	 */
@@ -40,13 +38,11 @@ public class Resource implements Serializable {
 	 *
 	 */
 	private static final long serialVersionUID = -5197939922820359198L;
-	private String resourceId;
-	private String resourceName;
-	private String resourceType;
+	private String type;
 
-	private Resource parentRes;
-	private List<Resource> childRes;
-	private boolean checked;
+	private Resource parent;
+	private List<Resource> children;
+	private List<Role> roles;
 
 	/**
 	 * operation types.
@@ -74,132 +70,69 @@ public class Resource implements Serializable {
 	}
 
 	/**
-	 * @return resourceId
-	 */
-	@Id
-	@GeneratedValue
-	@Column(name = "RESOURCE_ID")
-	public String getResourceId() {
-		return resourceId;
-	}
-
-	/**
-	 * @param resourceId
-	 *            resourceId
-	 */
-	public void setResourceId(String resourceId) {
-		this.resourceId = resourceId;
-	}
-
-	/**
-	 * @return resourceName
-	 */
-	@Column(name = "RESOURCE_NAME")
-	public String getResourceName() {
-		return resourceName;
-	}
-
-	/**
-	 * @param resourceName
-	 *            resourceName
-	 */
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
-	}
-
-	/**
-	 * @return resourceType
+	 * @return type
 	 */
 	@Column(name = "RESOURCE_TYPE")
-	public String getResourceType() {
-		return resourceType;
+	public String getType() {
+		return type;
 	}
 
 	/**
-	 * @param resourceType
-	 *            resourceType
+	 * @param type
+	 *            type
 	 */
-	public void setResourceType(String resourceType) {
-		this.resourceType = resourceType;
+	public void setType(String resourceType) {
+		this.type = resourceType;
 	}
 
 	/**
-	 * @return parentRes
+	 * @return parent
 	 */
 	@ManyToOne
 	@JoinColumn(name = "PARENT_RESOURCE", updatable = false)
-	public Resource getParentRes() {
-		return parentRes;
+	public Resource getParent() {
+		return parent;
 	}
 
 	/**
-	 * @param parentRes
-	 *            parentRes
+	 * @param parent
+	 *            parent
 	 */
-	public void setParentRes(Resource parentRes) {
-		this.parentRes = parentRes;
+	public void setParent(Resource parentRes) {
+		this.parent = parentRes;
 	}
 
 	/**
-	 * @return childRes
+	 * @return children
 	 */
-	@OneToMany(mappedBy = "parentRes")
-	public List<Resource> getChildRes() {
-		return childRes;
+	@OneToMany(mappedBy = "parent")
+	public List<Resource> getChildren() {
+		return children;
 	}
 
 	/**
-	 * @param childRes
-	 *            childRes
+	 * @param children
+	 *            children
 	 */
-	public void setChildRes(List<Resource> childRes) {
-		this.childRes = childRes;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Resource other = (Resource) obj;
-		if (resourceId == null) {
-			if (other.resourceId != null) {
-				return false;
-			}
-		} else if (!resourceId.equals(other.resourceId)) {
-			return false;
-		}
-		return true;
+	public void setChildren(List<Resource> childRes) {
+		this.children = childRes;
 	}
 
 	/**
-	 * @return boolean.
+	 * @return the roles
 	 */
-	@Transient
-	public boolean isChecked() {
-		return checked;
+	@ManyToMany
+	@JoinTable(name = "GBSC_AUTH_ROLE_RES", joinColumns = { @JoinColumn(name = "RES_CODE") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_CODE") })
+	public List<Role> getRoles() {
+		return roles;
 	}
 
 	/**
-	 * @param checked
-	 *            is to set value.
+	 * @param roles
+	 *            the roles to set
 	 */
-	public void setChecked(boolean checked) {
-		this.checked = checked;
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 }

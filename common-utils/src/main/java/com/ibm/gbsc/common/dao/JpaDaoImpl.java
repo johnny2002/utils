@@ -25,7 +25,7 @@ import com.ibm.gbsc.common.vo.PagedQueryResult;
 public abstract class JpaDaoImpl implements JpaDao {
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see com.ibm.gbsc.common.dao.JpaDao#executePagedQuery(javax.persistence.
 	 * EntityManager, java.lang.Class, com.ibm.gbsc.common.vo.PagedQueryParam,
 	 * javax.persistence.criteria.CriteriaQuery,
@@ -42,10 +42,10 @@ public abstract class JpaDaoImpl implements JpaDao {
 		List<T> list = executeQuery(pgQuery, true, false);// pgQuery.getResultList();
 		int totalResults = list.size();
 		// 如果当前记录数大于一页，并且入参中的记录总数为空，那么就要到数据库中求总数
-		if (totalResults >= queryParam.getPageSize()) {
+		{
 			if (queryParam.getRecordCount() != null) {
 				totalResults = queryParam.getRecordCount();
-			} else {
+			} else if (queryParam.getPageNumber() > 1 || totalResults >= queryParam.getPageSize()) {
 				CriteriaBuilder cb = em.getCriteriaBuilder();
 				CriteriaQuery<Long> cqCount = cb.createQuery(Long.class);
 				Expression<T> root = cqCount.from(resultClazz);

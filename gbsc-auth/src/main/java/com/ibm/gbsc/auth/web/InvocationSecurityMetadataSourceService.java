@@ -7,17 +7,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 
-import com.ibm.gbsc.auth.function.Function;
-import com.ibm.gbsc.auth.function.FunctionService;
-import com.ibm.gbsc.auth.user.Role;
+import com.ibm.gbsc.auth.resource.Function;
+import com.ibm.gbsc.auth.resource.FunctionService;
+import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.auth.user.UserService;
 
 /**
@@ -34,19 +35,18 @@ public class InvocationSecurityMetadataSourceService implements FilterInvocation
 	 */
 	private final Logger logger = LoggerFactory.getLogger(InvocationSecurityMetadataSourceService.class);
 
-	@Autowired
+	@Inject
 	UserService userService;
-	@Autowired
+	@Inject
 	FunctionService funcService;
 
 	// private UrlMatcher urlMatcher = new AntUrlPathMatcher();
 	private Map<String, String> resourceMap = null; // cache the mapping of
-													// function url and id;
+	                                                // function url and id;
 
 	/**
-	 * 
+	 *
 	 */
-	@SuppressWarnings("restriction")
 	@javax.annotation.PostConstruct
 	public void loadResourceDefine() {
 		resourceMap = new HashMap<String, String>();
@@ -54,10 +54,10 @@ public class InvocationSecurityMetadataSourceService implements FilterInvocation
 		for (Function func : funcs) {
 
 			if (func.getUrl() != null) {
-				resourceMap.put(func.getUrl(), func.getId());
+				resourceMap.put(func.getUrl(), func.getCode());
 			}
 			if (func.getPortletUrl() != null) {
-				resourceMap.put(func.getPortletUrl(), func.getId());
+				resourceMap.put(func.getPortletUrl(), func.getCode());
 			}
 		}
 
@@ -65,6 +65,7 @@ public class InvocationSecurityMetadataSourceService implements FilterInvocation
 
 	// According to a URL, Find out permission configuration of this URL.
 	/** {@inheritDoc} */
+	@Override
 	public Collection<ConfigAttribute> getAttributes(Object object) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("getAttributes(Object) - start"); //$NON-NLS-1$
@@ -93,11 +94,13 @@ public class InvocationSecurityMetadataSourceService implements FilterInvocation
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public boolean supports(Class<?> clazz) {
 		return true;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public Collection<ConfigAttribute> getAllConfigAttributes() {
 		return null;
 	}

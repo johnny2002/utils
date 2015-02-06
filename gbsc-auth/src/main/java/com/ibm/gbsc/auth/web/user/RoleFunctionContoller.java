@@ -6,10 +6,11 @@ package com.ibm.gbsc.auth.web.user;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,9 +24,9 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.GsonBuilder;
-import com.ibm.gbsc.auth.function.Function;
-import com.ibm.gbsc.auth.function.FunctionService;
-import com.ibm.gbsc.auth.user.Role;
+import com.ibm.gbsc.auth.resource.Function;
+import com.ibm.gbsc.auth.resource.FunctionService;
+import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.auth.user.UserService;
 
 /**
@@ -37,9 +38,9 @@ import com.ibm.gbsc.auth.user.UserService;
 @SessionAttributes({ "roleList", "functionList" })
 public class RoleFunctionContoller {
 	Logger log = LoggerFactory.getLogger(getClass());
-	@Autowired
+	@Inject
 	UserService userService;
-	@Autowired
+	@Inject
 	FunctionService functionService;
 
 	/**
@@ -71,7 +72,7 @@ public class RoleFunctionContoller {
 			@Override
 			public boolean shouldSkipField(FieldAttributes f) {
 
-				return !f.getName().equals("name") && !f.getName().equals("authority");
+				return !f.getName().equals("name") && !f.getName().equals("code");
 			}
 
 			@Override
@@ -84,7 +85,7 @@ public class RoleFunctionContoller {
 
 			@Override
 			public String translateName(Field f) {
-				if (f.getName().equals("authority")) {
+				if (f.getName().equals("code")) {
 					return "id";
 				}
 				return f.getName();
@@ -129,7 +130,7 @@ public class RoleFunctionContoller {
 		if (!roleList.contains(role)) {
 			roleList.add(role);
 		}
-		return role.getAuthority();
+		return role.getCode();
 	}
 
 	/**

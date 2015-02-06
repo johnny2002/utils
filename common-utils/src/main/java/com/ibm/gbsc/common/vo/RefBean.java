@@ -108,4 +108,14 @@ public class RefBean implements BaseVO {
 		return code;
 	}
 
+	/*
+	 * 本方法还用于与code比较，以用于判断是否同一个code项，所以不要改写
+	 *
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	final public String toString() {
+		return code;
+	}
+
 }

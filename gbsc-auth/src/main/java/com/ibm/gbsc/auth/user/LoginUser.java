@@ -5,6 +5,8 @@ import java.util.HashSet;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.ibm.gbsc.auth.resource.Role;
+
 /**
  * 当前登录用户信息.
  *

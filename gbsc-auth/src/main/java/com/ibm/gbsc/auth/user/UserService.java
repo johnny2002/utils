@@ -1,8 +1,8 @@
 package com.ibm.gbsc.auth.user;
 
 import java.util.List;
-import java.util.Set;
 
+import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.common.vo.PagedQueryResult;
 
 /**
@@ -88,14 +88,6 @@ public interface UserService {
 	List<Organization> getOrgTreeByLevel(int level);
 
 	/**
-	 * 保存组织结构信息，同时保存该组织拥有的角色.
-	 *
-	 * @param orgList
-	 *            orgList to be saved.
-	 */
-	void saveOrgTree(List<Organization> orgList);
-
-	/**
 	 * 根据组织结构的code查询该组织下的人员.
 	 *
 	 * @param orgCode
@@ -107,11 +99,18 @@ public interface UserService {
 	/**
 	 * 根据组织结构的code查询该组织.
 	 *
+	 *
 	 * @param orgCode
-	 *            org code
-	 * @return org.
+	 *            机构代码
+	 * @param loadRoles
+	 *            是否要加载roles
+	 * @param loadUsers
+	 *            是否要加载users;
+	 * @param loadChildren
+	 *            是否要加载children;
+	 * @return
 	 */
-	Organization getOrganization(String orgCode);
+	Organization getOrganization(String orgCode, boolean loadRoles, boolean loadUsers, boolean loadChildren);
 
 	/**
 	 * @param orgCode
@@ -153,11 +152,8 @@ public interface UserService {
 	void delRole(String roleCode);
 
 	/**
-	 * @param loginUser
-	 *            loginUser
-	 * @param resourceType
-	 *            resourceType
-	 * @return boolean
+	 * @param oldOrg
 	 */
-	Set<String> getResource(LoginUser loginUser, String resourceType);
+	void saveOrganzation(Organization org);
+
 }

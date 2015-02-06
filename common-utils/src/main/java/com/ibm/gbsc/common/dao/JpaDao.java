@@ -40,6 +40,14 @@ public interface JpaDao {
 
 	<T> List<T> executeQuery(TypedQuery<T> query, boolean readonly, boolean cacheable);
 
+	/**
+	 * 执行查询用只读模式，以提升性能
+	 * 
+	 * @param query
+	 * @return
+	 */
+	<T> List<T> executeReadonlyQuery(TypedQuery<T> query);
+
 	BigDecimal getNextId(EntityManager em);
 
 }
