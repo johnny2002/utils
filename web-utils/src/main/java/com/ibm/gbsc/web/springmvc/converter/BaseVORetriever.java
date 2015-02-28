@@ -36,7 +36,7 @@ public class BaseVORetriever {
 	 * @return t.
 	 */
 	public <T extends BaseVO> T getEntityById(Class<T> clazz, Serializable id) {
-		return em.getReference(clazz, id);
+		return em.find(clazz, id);
 	}
 
 }

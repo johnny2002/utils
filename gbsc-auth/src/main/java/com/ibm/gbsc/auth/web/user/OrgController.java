@@ -22,10 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.auth.user.Organization;
 import com.ibm.gbsc.auth.user.UserService;
+import com.ibm.gbsc.gson.ZtreeNodeFieldNamingStrategy;
 import com.ibm.gbsc.web.model.TreeNode;
 import com.ibm.gbsc.web.springmvc.view.GsonView;
 
@@ -53,8 +54,9 @@ public class OrgController {
 	public String showOrgAll(Model model) {
 
 		List<Organization> orgList = userService.getOrgTreeByLevel(1);
-
-		model.addAttribute("orgTreeJson", new Gson().toJson(toTreeNodes(orgList)));
+		GsonBuilder gb = new GsonBuilder();
+		gb.setFieldNamingStrategy(new ZtreeNodeFieldNamingStrategy());
+		model.addAttribute("orgTreeJson", gb.create().toJson(toTreeNodes(orgList)));
 		model.addAttribute("orgList", orgList);
 		return "/auth/user/orgTree.ftl";
 	}
@@ -66,6 +68,8 @@ public class OrgController {
 			nodes.add(node);
 			node.setId(org.getCode());
 			node.setName(org.getName());
+			node.setCss(org.isVirtual() ? "virtualOrg" : "organization");
+			node.setOpen(true);
 			// node.setUrl("orgs/" + org.getCode() + "/roles");
 			// node.setOnclick("return openOrgRoles('" + org.getCode() + "');");
 			if (!(org.getChildren() == null || org.getChildren().isEmpty())) {

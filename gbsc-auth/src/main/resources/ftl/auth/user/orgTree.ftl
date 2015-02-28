@@ -41,14 +41,16 @@
 </head>
 <body>
 
-演示：${base}
+<table>
+<tr><td>
 <div class="zTreeDemoBackground left">
 		<ul id="treeOrg" class="ztree"></ul>
 </div>
-
+</td><td>
 <div id="orgRoles">
 点击机构节点，查看和修改机构的角色。
 </div>
-
+</td></tr>
+</table>
 </body>
 </html>

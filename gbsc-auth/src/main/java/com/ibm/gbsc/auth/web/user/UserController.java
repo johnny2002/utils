@@ -4,6 +4,9 @@
 package com.ibm.gbsc.auth.web.user;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.auth.user.User;
 import com.ibm.gbsc.auth.user.UserService;
 import com.ibm.gbsc.auth.user.UserState;
@@ -78,6 +82,12 @@ public class UserController {
 			userStatesMap.put(sts.name(), messageSource.getMessage(UserState.class.getName() + "." + sts.name(), null, null));
 		}
 		model.addAttribute("UserStates", userStatesMap);
+		List<Role> roles = userService.getAllRoles();
+		Map<String, String> rolesMap = new TreeMap<String, String>();
+		for (Role role : roles) {
+			rolesMap.put(role.getCode(), role.getName());
+		}
+		model.addAttribute("roles", rolesMap);
 	}
 
 }

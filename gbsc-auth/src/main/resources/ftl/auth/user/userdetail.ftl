@@ -12,7 +12,7 @@
 <@fmt.setBundle basename="i18n/auth-messages" />
 <script type="text/javascript">
 	var sbMethod = window.location.href.indexOf("/new") > 0 ? "POST" : "PUT";
-	submitForm(theForm, sbMethod);
+	//submitForm(theForm, sbMethod);
 </script>
 
 </head>
@@ -56,11 +56,12 @@
 				<td>&nbsp;</td>
 			</tr>
 		</table>
-		
-		<br/>
-		
-		<input type="button" value="保存" onclick="submitForm(this.form)"/>
-		<input type="button" value="Cancel" onclick="location.href='search.htm'"/>
+<br/>
+用户角色：<br/>		
+<@spring.formCheckboxes path="theUser.roles" options=roles separator="" errors=true/>
+		<hr/>
+		<input type="button" value="保存" onclick="submitForm(this.form, sbMethod)"/>
+		<input type="button" value="Cancel" onclick="location.href='../usersearch/search.htm'"/>
 	</form>
 	
 	

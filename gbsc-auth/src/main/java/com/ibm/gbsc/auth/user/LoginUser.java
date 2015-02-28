@@ -46,7 +46,8 @@ public class LoginUser implements UserDetails {
 		if (!org.getRoles().isEmpty()) {
 			authorities.addAll(org.getRoles());
 		}
-		if (org.getParent() != null) {
+		// 仅当相同的node code的上级机构才把角色传递到下级机构
+		if (org.getParent() != null && org.getNodeCode().equals(org.getParent().getNodeCode())) {
 			addOrgRoles(org.getParent());
 		}
 	}

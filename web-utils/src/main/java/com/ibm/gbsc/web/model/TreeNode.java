@@ -20,6 +20,14 @@ public class TreeNode implements Serializable {
 	private static final long serialVersionUID = -4252694171782669207L;
 	private String id;
 	private String name;
+	/**
+	 * 非叶子节点缺省是否打开
+	 */
+	private boolean open;
+	/**
+	 * 节点的css class name
+	 */
+	private String css;
 	private Collection<TreeNode> children;
 
 	/**
@@ -65,6 +73,36 @@ public class TreeNode implements Serializable {
 	 */
 	public void setChildren(Collection<TreeNode> children) {
 		this.children = children;
+	}
+
+	/**
+	 * @return the open
+	 */
+	public boolean isOpen() {
+		return open;
+	}
+
+	/**
+	 * @param open
+	 *            the open to set
+	 */
+	public void setOpen(boolean open) {
+		this.open = open;
+	}
+
+	/**
+	 * @return the css
+	 */
+	public String getCss() {
+		return css;
+	}
+
+	/**
+	 * @param css
+	 *            the css to set
+	 */
+	public void setCss(String css) {
+		this.css = css;
 	}
 
 }
