@@ -1,4 +1,4 @@
-package com.ibm.gbsc.auth.encode;
+package com.ibm.gbsc.auth.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.ibm.gbsc.auth.user;
+package com.ibm.gbsc.auth.model;
 
 import java.util.List;
 import java.util.Set;
@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 
-import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.common.vo.RefBean;
 
 /**

@@ -1,4 +1,4 @@
-package com.ibm.gbsc.auth.resource;
+package com.ibm.gbsc.auth.model;
 
 import java.util.List;
 import java.util.Set;
@@ -14,7 +14,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.QueryHint;
 import javax.persistence.Table;
 
 import com.ibm.gbsc.common.vo.RefBean;
@@ -27,14 +26,11 @@ import com.ibm.gbsc.common.vo.RefBean;
 @Entity
 @Table(name = "GBSC_AUTH_FUNC")
 @NamedQueries({
-        @NamedQuery(name = "Function.getAll", query = "select menu from Function menu where menu.active = true", hints = {
-                @QueryHint(name = "org.hibernate.readOnly", value = "true"), @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "Function.get1stLevel", query = "select menu from Function menu where menu.parent is null and menu.active = true order by menu.seq", hints = {
-                @QueryHint(name = "org.hibernate.readOnly", value = "true"), @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "Function.getTOP", query = "select menu from Function menu where menu.top = true and menu.active = true order by menu.seq", hints = {
-                @QueryHint(name = "org.hibernate.readOnly", value = "true"), @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "Function.getMenu", query = "select menu from Function menu where menu.menu = true and menu.parent is null and menu.active = true order by menu.seq", hints = {
-                @QueryHint(name = "org.hibernate.readOnly", value = "true"), @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+        @NamedQuery(name = "Function.getAll", query = "select func from Function func where func.active = true"),
+        @NamedQuery(name = "Function.get1stLevel", query = "select func from Function func where func.parent is null and func.active = true order by func.seq"),
+        @NamedQuery(name = "Function.byRole", query = "SELECT func FROM Function func, IN(func.roles) rl WHERE rl = :role"),
+        @NamedQuery(name = "Function.getTOP", query = "select func from Function func where func.top = true and func.active = true order by func.seq"),
+        @NamedQuery(name = "Function.getMenu", query = "select func from Function func where func.menu = true and func.parent is null and func.active = true order by func.seq") })
 @Cacheable
 public class Function extends RefBean {
 	/**

@@ -1,4 +1,4 @@
-package com.ibm.gbsc.auth.user;
+package com.ibm.gbsc.auth.vo;
 
 /**
  * @author Johnny

@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.ibm.gbsc.auth.web.user;
+package com.ibm.gbsc.auth.web;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 
 import com.google.gson.GsonBuilder;
-import com.ibm.gbsc.auth.resource.Role;
-import com.ibm.gbsc.auth.user.Organization;
-import com.ibm.gbsc.auth.user.UserService;
+import com.ibm.gbsc.auth.model.Organization;
+import com.ibm.gbsc.auth.model.Role;
+import com.ibm.gbsc.auth.service.AuthService;
 import com.ibm.gbsc.gson.ZtreeNodeFieldNamingStrategy;
 import com.ibm.gbsc.web.model.TreeNode;
 import com.ibm.gbsc.web.springmvc.view.GsonView;
@@ -39,7 +39,7 @@ import com.ibm.gbsc.web.springmvc.view.GsonView;
 public class OrgController {
 	Logger log = LoggerFactory.getLogger(getClass());
 	@Inject
-	UserService userService;
+	AuthService authService;
 	@Inject
 	MessageSource messageSource;
 
@@ -53,12 +53,12 @@ public class OrgController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String showOrgAll(Model model) {
 
-		List<Organization> orgList = userService.getOrgTreeByLevel(1);
+		List<Organization> orgList = authService.getOrgTreeByLevel(1);
 		GsonBuilder gb = new GsonBuilder();
 		gb.setFieldNamingStrategy(new ZtreeNodeFieldNamingStrategy());
 		model.addAttribute("orgTreeJson", gb.create().toJson(toTreeNodes(orgList)));
 		model.addAttribute("orgList", orgList);
-		return "/auth/user/orgTree.ftl";
+		return "/auth/orgTree.ftl";
 	}
 
 	private List<TreeNode> toTreeNodes(List<Organization> orgs) {
@@ -81,22 +81,22 @@ public class OrgController {
 
 	@RequestMapping(value = "/{orgCode}/roles", method = RequestMethod.GET)
 	public String showOrgRoles(@PathVariable String orgCode, Model model) {
-		Organization org = userService.getOrganization(orgCode, true, false, false);
+		Organization org = authService.getOrganization(orgCode, true, false, false);
 		model.addAttribute("org", org);
-		List<Role> roles = userService.getAllRoles();
+		List<Role> roles = authService.getAllRoles();
 		Map<String, String> rolesMap = new TreeMap<String, String>();
 		for (Role role : roles) {
 			rolesMap.put(role.getCode(), role.getName());
 		}
 		model.addAttribute("roles", rolesMap);
-		return "/auth/user/orgRole.ftl";
+		return "/auth/orgRole.ftl";
 	}
 
 	@RequestMapping(value = "/{orgCode}", method = RequestMethod.PUT)
 	public View saveOrgRoles(@PathVariable String orgCode, @ModelAttribute("org") Organization org, BindingResult bResult, Model model) {
-		Organization oldOrg = userService.getOrganization(orgCode, true, false, false);
+		Organization oldOrg = authService.getOrganization(orgCode, true, false, false);
 		oldOrg.setRoles(org.getRoles());
-		userService.saveOrganzation(oldOrg);
+		authService.saveOrganzation(oldOrg);
 		GsonView vw = new GsonView();
 		vw.addAttribute("message", messageSource.getMessage("auth.org.savedOK", new Object[] { orgCode }, null));
 		return vw;
@@ -111,7 +111,7 @@ public class OrgController {
 	 */
 	@RequestMapping(value = "/{orgCode}", method = RequestMethod.DELETE)
 	public String delOrg(@PathVariable String orgCode, Model model) {
-		userService.delOrganization(orgCode);
+		authService.delOrganization(orgCode);
 		return "success";
 	}
 }

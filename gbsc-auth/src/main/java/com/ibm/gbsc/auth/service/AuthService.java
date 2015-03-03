@@ -1,21 +1,27 @@
-package com.ibm.gbsc.auth.user;
+/*
+ * IBM Corporation.
+ * Copyright (c) 2014 All Rights Reserved.
+ */
 
+package com.ibm.gbsc.auth.service;
+
+import java.util.Collection;
 import java.util.List;
 
+import com.ibm.gbsc.auth.model.Function;
 import com.ibm.gbsc.auth.model.Organization;
+import com.ibm.gbsc.auth.model.Resource;
 import com.ibm.gbsc.auth.model.Role;
 import com.ibm.gbsc.auth.model.User;
 import com.ibm.gbsc.auth.vo.UserPagedQueryParam;
 import com.ibm.gbsc.common.vo.PagedQueryResult;
 
 /**
+ * 类作用：
  *
- * 用户及组织机构，角色功能接口.
- *
- * @author Johnny
- *
+ * @author Johnny@cn.ibm.com 使用说明：
  */
-public interface UserService {
+public interface AuthService {
 	/**
 	 * 主键取role.
 	 *
@@ -61,27 +67,6 @@ public interface UserService {
 	void saveUser(User user);
 
 	/**
-	 * @param userCode
-	 *            the user code
-	 * @param newPasswd
-	 *            new password
-	 * @param oldPassword
-	 *            old password
-	 */
-	void updateUserPassword(String userCode, String newPasswd, String oldPassword);
-
-	/**
-	 * 按层级查找机构.
-	 *
-	 * @param level
-	 *            层级
-	 * @param type
-	 *            机构类型
-	 * @return 指定的层级机构列表，不包括下级机构
-	 */
-	List<Organization> getOrganizationByLevelType(int level, String type);
-
-	/**
 	 * 按层级查找机构，同时取得所有的下级机构树.
 	 *
 	 * @param level
@@ -89,15 +74,6 @@ public interface UserService {
 	 * @return 机构树，及角色
 	 */
 	List<Organization> getOrgTreeByLevel(int level);
-
-	/**
-	 * 根据组织结构的code查询该组织下的人员.
-	 *
-	 * @param orgCode
-	 *            orgCode
-	 * @return user under the org.
-	 */
-	List<User> getUserByOrgCode(String orgCode);
 
 	/**
 	 * 根据组织结构的code查询该组织.
@@ -116,21 +92,6 @@ public interface UserService {
 	Organization getOrganization(String orgCode, boolean loadRoles, boolean loadUsers, boolean loadChildren);
 
 	/**
-	 * @param orgCode
-	 *            orgCode
-	 * @return org
-	 */
-	Organization getOrganizationLite(String orgCode);
-
-	/**
-	 * 更新组织结构信息.
-	 *
-	 * @param org
-	 *            org
-	 */
-	void updateOrganization(Organization org);
-
-	/**
 	 * 根据组织结构的code删除该组织.
 	 *
 	 * @param orgCode
@@ -139,24 +100,30 @@ public interface UserService {
 	void delOrganization(String orgCode);
 
 	/**
-	 * 更新角色信息.
-	 *
-	 * @param theRole
-	 *            role
-	 */
-	void updateRole(Role theRole);
-
-	/**
-	 * 根据主键删除角色.
-	 *
-	 * @param roleCode
-	 *            role code
-	 */
-	void delRole(String roleCode);
-
-	/**
 	 * @param oldOrg
 	 */
 	void saveOrganzation(Organization org);
+
+	/**
+	 * @param roles
+	 * @return
+	 */
+	List<Resource> getResourceByRoles(Collection<Role> roles);
+
+	/**
+	 * @return
+	 */
+	List<Function> getFunctionTree();
+
+	/**
+	 * @return
+	 */
+	List<Function> getAllFunctions();
+
+	/**
+	 * @param role
+	 * @return
+	 */
+	List<Function> getFunctionsByRole(Role role);
 
 }

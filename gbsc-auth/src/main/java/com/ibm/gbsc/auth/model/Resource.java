@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.ibm.gbsc.auth.resource;
+package com.ibm.gbsc.auth.model;
 
 import java.util.List;
 
@@ -19,25 +19,21 @@ import javax.persistence.Table;
 import com.ibm.gbsc.common.vo.RefBean;
 
 /**
- * @author fanjingxuan
+ * 类作用：资源实体
+ * 
+ * @author Johnny@cn.ibm.com 使用说明：
  */
 @Entity
 @Table(name = "GBSC_AUTH_RESOURCE")
 @NamedQueries({ @NamedQuery(name = "Resource.getAll", query = "From Resource r where r.parent is null order by r.type") })
 public class Resource extends RefBean {
 	/**
-	 * 报表索引.
-	 */
-	public static final String RESOURCE_TYPE_RPT_INDEX = "1";
-
-	/**
-	 * indicator resource.
-	 */
-	public static final String RESOURCE_TYPE_INDICATORCATEGORY = "2";
-	/**
 	 *
 	 */
 	private static final long serialVersionUID = -5197939922820359198L;
+	/**
+	 * 类型，如:报表，指标，客户等，各系统可以根据自己定义不同的类型
+	 */
 	private String type;
 
 	private Resource parent;

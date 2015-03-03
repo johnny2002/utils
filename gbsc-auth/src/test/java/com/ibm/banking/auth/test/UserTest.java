@@ -11,26 +11,20 @@ import org.testng.annotations.Test;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.GsonBuilder;
-import com.ibm.gbsc.auth.resource.Function;
-import com.ibm.gbsc.auth.resource.FunctionService;
-import com.ibm.gbsc.auth.resource.ResourceService;
-import com.ibm.gbsc.auth.resource.Role;
-import com.ibm.gbsc.auth.user.Organization;
-import com.ibm.gbsc.auth.user.UserPagedQueryParam;
-import com.ibm.gbsc.auth.user.UserService;
+import com.ibm.gbsc.auth.model.Function;
+import com.ibm.gbsc.auth.model.Organization;
+import com.ibm.gbsc.auth.model.Role;
+import com.ibm.gbsc.auth.service.AuthService;
+import com.ibm.gbsc.auth.vo.UserPagedQueryParam;
 import com.ibm.gbsc.test.BaseTest;
 
 public class UserTest extends BaseTest {
 	@Inject
-	ResourceService resourceService;
-	@Inject
-	UserService userService;
-	@Inject
-	FunctionService fs;
+	AuthService auth;
 
 	@Test
 	public void testFunctionMain() {
-		List<Function> func = fs.getFunctionsByType("TOP", false);
+		List<Function> func = auth.getAllFunctions();
 		String json = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
 			List<String> names = Arrays.asList(new String[] { "id", "name", "url", "portletUrl", "children" });
 
@@ -52,7 +46,7 @@ public class UserTest extends BaseTest {
 
 	@Test
 	public void testGetNodes() {
-		List<Organization> orgs = userService.getOrgTreeByLevel(1);
+		List<Organization> orgs = auth.getOrgTreeByLevel(1);
 		for (Organization org : orgs.get(0).getChildren()) {
 			System.out.println(org.getCode() + org.getName() + org.getNodeCode());
 		}
@@ -60,7 +54,7 @@ public class UserTest extends BaseTest {
 
 	@Test
 	public void testA() {
-		List<Function> ls = fs.getFunctionTree();
+		List<Function> ls = auth.getFunctionTree();
 		GsonBuilder bld = new GsonBuilder();
 		bld.addSerializationExclusionStrategy(new ExclusionStrategy() {
 
@@ -83,14 +77,14 @@ public class UserTest extends BaseTest {
 	@Test
 	public void testGetResource() {
 		List<Role> roles = new ArrayList<Role>();
-		Role role = userService.getRole("RISK_INT_SYS_ADMIN");
+		Role role = auth.getRole("RISK_INT_SYS_ADMIN");
 		roles.add(role);
-		// System.out.println(userService.getResource(roles, "1",1).size());
+		// System.out.println(authService.getResource(roles, "1",1).size());
 	}
 
 	@Test
-	public void testDelRoleResByRoleId() {
-		// resourceService.delRoleResByRoleId("RISK_INT_DATA_AGENCY");
+	public void testGetRoleFunctions() {
+		auth.getFunctionsByRole(new Role("DEVP", ""));
 	}
 
 	@Test
@@ -98,6 +92,6 @@ public class UserTest extends BaseTest {
 		UserPagedQueryParam param = new UserPagedQueryParam();
 		param.setName("周");
 		param.setOrgName("风险");
-		userService.searchUser(param);
+		auth.searchUser(param);
 	}
 }

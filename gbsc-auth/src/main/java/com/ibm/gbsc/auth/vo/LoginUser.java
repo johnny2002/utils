@@ -1,11 +1,14 @@
-package com.ibm.gbsc.auth.user;
+package com.ibm.gbsc.auth.vo;
 
 import java.util.Collection;
 import java.util.HashSet;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.ibm.gbsc.auth.resource.Role;
+import com.ibm.gbsc.auth.model.Organization;
+import com.ibm.gbsc.auth.model.Role;
+import com.ibm.gbsc.auth.model.User;
+import com.ibm.gbsc.auth.model.UserState;
 
 /**
  * 当前登录用户信息.

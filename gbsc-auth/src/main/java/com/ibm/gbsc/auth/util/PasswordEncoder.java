@@ -1,4 +1,4 @@
-package com.ibm.gbsc.auth.encode;
+package com.ibm.gbsc.auth.util;
 
 /**
  * 本工具类用于生成临时密码.

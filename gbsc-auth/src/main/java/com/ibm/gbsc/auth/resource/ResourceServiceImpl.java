@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ibm.gbsc.auth.model.Resource;
+import com.ibm.gbsc.auth.model.Role;
 import com.ibm.gbsc.common.dao.JpaDao;
 
 /**

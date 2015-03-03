@@ -17,7 +17,7 @@ import com.ibm.gbsc.common.vo.PagedQueryParam;
 import com.ibm.gbsc.common.vo.PagedQueryResult;
 
 /**
- * 类作用：
+ * 类作用：辅助数据访问
  *
  * @author Johnny@cn.ibm.com 使用说明：
  * @param <T>
@@ -42,7 +42,7 @@ public interface JpaDao {
 
 	/**
 	 * 执行查询用只读模式，以提升性能
-	 * 
+	 *
 	 * @param query
 	 * @return
 	 */

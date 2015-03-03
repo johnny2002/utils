@@ -2,6 +2,8 @@ package com.ibm.gbsc.auth.resource;
 
 import java.util.List;
 
+import com.ibm.gbsc.auth.model.Function;
+
 /**
  * function service interface.
  * @author Johnny

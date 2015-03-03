@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.ibm.gbsc.auth.user;
+package com.ibm.gbsc.auth.vo;
 
 import com.ibm.gbsc.common.vo.PagedQueryParam;
 

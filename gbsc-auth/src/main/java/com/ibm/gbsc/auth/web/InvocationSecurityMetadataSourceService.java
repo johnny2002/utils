@@ -16,9 +16,9 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 
-import com.ibm.gbsc.auth.resource.Function;
+import com.ibm.gbsc.auth.model.Function;
+import com.ibm.gbsc.auth.model.Role;
 import com.ibm.gbsc.auth.resource.FunctionService;
-import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.auth.user.UserService;
 
 /**

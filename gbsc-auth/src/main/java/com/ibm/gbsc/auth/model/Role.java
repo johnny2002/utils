@@ -1,4 +1,4 @@
-package com.ibm.gbsc.auth.resource;
+package com.ibm.gbsc.auth.model;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -32,9 +32,17 @@ public class Role extends RefBean implements GrantedAuthority {
 	public Role() {
 	}
 
+	/**
+	 * @param code
+	 * @param name
+	 */
+	public Role(String code, String name) {
+		super(code, name);
+	}
+
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.springframework.security.core.GrantedAuthority#getAuthority()
 	 */
 	@Override

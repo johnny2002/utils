@@ -1,4 +1,9 @@
-package com.ibm.gbsc.auth.user;
+/*
+ * IBM Corporation.
+ * Copyright (c) 2014 All Rights Reserved.
+ */
+
+package com.ibm.gbsc.auth.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,7 +12,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,21 +25,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ibm.gbsc.auth.model.Function;
 import com.ibm.gbsc.auth.model.Organization;
+import com.ibm.gbsc.auth.model.Resource;
 import com.ibm.gbsc.auth.model.Role;
 import com.ibm.gbsc.auth.model.User;
-import com.ibm.gbsc.auth.vo.CurrentPasswdIncorrectException;
 import com.ibm.gbsc.auth.vo.UserNotFoundException;
 import com.ibm.gbsc.auth.vo.UserPagedQueryParam;
 import com.ibm.gbsc.common.dao.JpaDao;
 import com.ibm.gbsc.common.vo.PagedQueryResult;
 
 /**
- * @author Johnny
+ * 类作用：
+ *
+ * @author Johnny@cn.ibm.com 使用说明：
  */
 @Service
 @Transactional(readOnly = true)
-public class UserServiceImpl implements UserService {
+public class AuthServiceImpl implements AuthService {
 	Logger log = LoggerFactory.getLogger(getClass());
 	@PersistenceContext
 	EntityManager em;
@@ -102,9 +109,6 @@ public class UserServiceImpl implements UserService {
 			user.getDepartments().size();
 		}
 		return result;
-
-		// return rst;
-
 	}
 
 	/** {@inheritDoc} */
@@ -141,27 +145,6 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public List<Organization> getOrganizationByLevelType(int level, String type) {
-		TypedQuery<Organization> queryOrgByLevelType = em.createNamedQuery("Organization.getByLevelType", Organization.class);
-		queryOrgByLevelType.setParameter("level", level);
-		queryOrgByLevelType.setParameter("type", type);
-		List<Organization> list = dao.executeReadonlyQuery(queryOrgByLevelType);
-		return list;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public List<User> getUserByOrgCode(String orgCode) {
-		Query queryUserByOrgCode = em.createNamedQuery("User.getByOrgCode");
-		queryUserByOrgCode.setParameter("code", orgCode);
-		@SuppressWarnings("unchecked")
-		List<User> users = queryUserByOrgCode.getResultList();
-		initUsers(users);
-		return users;
-	}
-
 	/**
 	 * @param users
 	 *            users
@@ -190,20 +173,6 @@ public class UserServiceImpl implements UserService {
 		return org;
 	}
 
-	@Override
-	public Organization getOrganizationLite(String orgCode) {
-		Organization org = em.find(Organization.class, orgCode);
-		return org;
-
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	@Transactional(readOnly = false)
-	public void updateOrganization(Organization org) {
-		em.merge(org);
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	@Transactional(readOnly = false)
@@ -216,35 +185,9 @@ public class UserServiceImpl implements UserService {
 		em.remove(org);
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	@Transactional(readOnly = false)
-	public void updateRole(Role theRole) {
-		em.merge(theRole);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	@Transactional(readOnly = false)
-	public void delRole(String roleCode) {
-		Role role = em.getReference(Role.class, roleCode);
-		em.remove(role);
-	}
-
-	@Override
-	@Transactional(readOnly = false)
-	public void updateUserPassword(String userCode, String newPasswd, String oldPassword) {
-		User user = em.find(User.class, userCode);
-		if (oldPassword.equals(user.getPassword())) {
-			user.setPassword(newPasswd);
-		} else {
-			throw new CurrentPasswdIncorrectException();
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.ibm.gbsc.auth.user.UserService#saveUser(com.ibm.gbsc.auth.user.User)
 	 */
@@ -256,7 +199,7 @@ public class UserServiceImpl implements UserService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.ibm.gbsc.auth.user.UserService#saveOrganzation(com.ibm.gbsc.auth.
 	 * user.Organization)
@@ -265,6 +208,79 @@ public class UserServiceImpl implements UserService {
 	@Transactional(readOnly = false)
 	public void saveOrganzation(Organization org) {
 		em.merge(org);
+
+	}
+
+	@Override
+	public List<Resource> getResourceByRoles(Collection<Role> roles) {
+		StringBuilder jql = new StringBuilder(512).append("select r From Resource r, IN (r.roles) role where role.code in ('-1'");
+		for (int i = 0; i < roles.size(); i++) {
+			jql.append(", ?").append(i);
+		}
+		jql.append(")");
+		TypedQuery<Resource> roleQuery = em.createQuery(jql.toString(), Resource.class);
+		int i = 0;
+		for (Role role : roles) {
+			roleQuery.setParameter(i++, role.getCode());
+		}
+		List<Resource> resList = dao.executeQuery(roleQuery, true, false);
+		initRes(resList);
+		return resList;
+	}
+
+	/**
+	 * @param resList
+	 *            resource list.
+	 */
+	private void initRes(List<Resource> resList) {
+		for (Resource res : resList) {
+			if (res == null) {
+				continue;
+			}
+			if (res.getChildren() != null) {
+				res.getChildren().size();
+				initRes(res.getChildren());
+			}
+		}
+	}
+
+	@Override
+	public List<Function> getFunctionTree() {
+		List<Function> funcs = em.createNamedQuery("Function.get1stLevel", Function.class).getResultList();
+		initSubFuncs(funcs, true);
+		return funcs;
+	}
+
+	@Override
+	public List<Function> getAllFunctions() {
+		List<Function> funcs = em.createNamedQuery("Function.getAll", Function.class).getResultList();
+		for (Function func : funcs) {
+			func.getRoles().size();
+		}
+		return funcs;
+	}
+
+	@Override
+	public List<Function> getFunctionsByRole(Role role) {
+		List<Function> funcs = em.createNamedQuery("Function.byRole", Function.class).setParameter("role", role).getResultList();
+		return funcs;
+	}
+
+	/**
+	 * @param menus
+	 *            menus
+	 * @param recursive
+	 *            recursively or not
+	 */
+	private void initSubFuncs(List<Function> menus, boolean recursive) {
+		for (Function menu : menus) {
+			if (menu.getChildren() != null) {
+				menu.getRoles().size();
+				if (recursive) {
+					initSubFuncs(menu.getChildren(), recursive);
+				}
+			}
+		}
 
 	}
 }

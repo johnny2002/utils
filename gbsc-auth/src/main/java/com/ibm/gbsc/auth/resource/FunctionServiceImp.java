@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ibm.gbsc.auth.model.Function;
+import com.ibm.gbsc.auth.model.Role;
+
 /**
  * function service implementation.
  *
@@ -115,9 +118,9 @@ public class FunctionServiceImp implements FunctionService {
 
 	@Override
 	public List<Function> getFunctionTree() {
-		List<Function> menus = em.createNamedQuery("Function.get1stLevel", Function.class).getResultList();
-		initSubFuncs(menus, true);
-		return menus;
+		List<Function> funcs = em.createNamedQuery("Function.get1stLevel", Function.class).getResultList();
+		initSubFuncs(funcs, true);
+		return funcs;
 	}
 
 	@Override

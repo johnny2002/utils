@@ -1,4 +1,4 @@
-package com.ibm.gbsc.auth.web.user;
+package com.ibm.gbsc.auth.web;
 
 import javax.inject.Inject;
 
@@ -6,11 +6,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.ibm.gbsc.auth.user.User;
-import com.ibm.gbsc.auth.user.UserPagedQueryParam;
-import com.ibm.gbsc.auth.user.UserService;
+import com.ibm.gbsc.auth.model.User;
+import com.ibm.gbsc.auth.service.AuthService;
+import com.ibm.gbsc.auth.vo.UserPagedQueryParam;
 import com.ibm.gbsc.common.vo.PagedQueryResult;
-import com.ibm.gbsc.web.springmvc.controller.SearchListBaseController;
+import com.ibm.gbsc.web.springmvc.controller.PagedSearchListController;
 
 /**
  * @author yangyz
@@ -18,15 +18,15 @@ import com.ibm.gbsc.web.springmvc.controller.SearchListBaseController;
  */
 @Controller
 @RequestMapping("/auth/usersearch")
-public class UserSearchContoller extends SearchListBaseController<User, UserPagedQueryParam> {
+public class UserSearchContoller extends PagedSearchListController<User, UserPagedQueryParam> {
 
 	@Inject
-	UserService userService;
+	AuthService authService;
 
 	@Override
 	protected PagedQueryResult<User> searchData(UserPagedQueryParam queryParam) {
 
-		return userService.searchUser(queryParam);
+		return authService.searchUser(queryParam);
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class UserSearchContoller extends SearchListBaseController<User, UserPage
 
 	@Override
 	protected String getListViewName() {
-		return "/auth/user/userSearchList.ftl";
+		return "/auth/userSearchList.ftl";
 	}
 
 	@Override

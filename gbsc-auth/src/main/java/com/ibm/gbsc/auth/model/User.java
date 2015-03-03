@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.ibm.gbsc.auth.user;
+package com.ibm.gbsc.auth.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -24,7 +24,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.common.vo.BaseVO;
 
 /**

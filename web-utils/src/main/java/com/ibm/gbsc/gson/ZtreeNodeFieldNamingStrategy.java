@@ -10,8 +10,8 @@ import java.lang.reflect.Field;
 import com.google.gson.FieldNamingStrategy;
 
 /**
- * 类作用：
- * 
+ * 类作用：用于映射TreeNode的字段到ZTree字段
+ *
  * @author Johnny@cn.ibm.com 使用说明：
  */
 public class ZtreeNodeFieldNamingStrategy implements FieldNamingStrategy {
@@ -25,7 +25,10 @@ public class ZtreeNodeFieldNamingStrategy implements FieldNamingStrategy {
 	 */
 	@Override
 	public String translateName(Field f) {
-		return "css".equals(f.getName()) ? "iconSkin" : f.getName();
+		if ("css".equals(f.getName())) {
+			return "iconSkin";
+		}
+		return f.getName();
 	}
 
 }

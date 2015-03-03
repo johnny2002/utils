@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.ibm.gbsc.auth.user;
+package com.ibm.gbsc.auth.model;
 
 /**
  * user state defination.

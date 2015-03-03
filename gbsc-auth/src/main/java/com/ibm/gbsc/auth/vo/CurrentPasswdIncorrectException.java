@@ -1,4 +1,4 @@
-package com.ibm.gbsc.auth.user;
+package com.ibm.gbsc.auth.vo;
 
 /**
  * 用户当前的密码输入错误.

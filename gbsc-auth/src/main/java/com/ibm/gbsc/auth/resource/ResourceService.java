@@ -6,6 +6,9 @@ package com.ibm.gbsc.auth.resource;
 import java.util.Collection;
 import java.util.List;
 
+import com.ibm.gbsc.auth.model.Resource;
+import com.ibm.gbsc.auth.model.Role;
+
 /**
  * @author fanjingxuan
  *

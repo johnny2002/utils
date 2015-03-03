@@ -6,8 +6,8 @@ import javax.inject.Inject;
 
 import org.testng.annotations.Test;
 
+import com.ibm.gbsc.auth.model.Role;
 import com.ibm.gbsc.auth.resource.ResourceService;
-import com.ibm.gbsc.auth.resource.Role;
 import com.ibm.gbsc.test.BaseTest;
 
 public class ResourceTest extends BaseTest {

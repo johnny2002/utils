@@ -52,8 +52,8 @@
 			<tr>
 				<td>邮件地址</td>
 				<td><@spring.formInput path="theUser.email" errors=true/></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
+				<td>所属部门</td>
+				<td><@c.out value=theUser.departments /></td>
 			</tr>
 		</table>
 <br/>

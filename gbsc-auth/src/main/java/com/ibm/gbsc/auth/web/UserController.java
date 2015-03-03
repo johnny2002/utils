@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.ibm.gbsc.auth.web.user;
+package com.ibm.gbsc.auth.web;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ibm.gbsc.auth.resource.Role;
-import com.ibm.gbsc.auth.user.User;
-import com.ibm.gbsc.auth.user.UserService;
-import com.ibm.gbsc.auth.user.UserState;
+import com.ibm.gbsc.auth.model.Role;
+import com.ibm.gbsc.auth.model.User;
+import com.ibm.gbsc.auth.model.UserState;
+import com.ibm.gbsc.auth.service.AuthService;
 import com.ibm.gbsc.web.springmvc.view.GsonView;
 
 /**
@@ -36,9 +36,13 @@ import com.ibm.gbsc.web.springmvc.view.GsonView;
 @Controller
 @RequestMapping("/auth/users")
 public class UserController {
+	/**
+	 *
+	 */
+	private static final String USER_USERDETAIL_FTL = "/auth/userdetail.ftl";
 	Logger log = LoggerFactory.getLogger(getClass());
 	@Inject
-	UserService userService;
+	AuthService authService;
 	@Inject
 	MessageSource messageSource;
 
@@ -49,11 +53,11 @@ public class UserController {
 			user = new User();
 			model.addAttribute("_mode", "new");
 		} else {
-			user = userService.getUser(userCode);
+			user = authService.getUser(userCode);
 		}
 		model.addAttribute("theUser", user);
 		refData(model);
-		return "/auth/user/userdetail.ftl";
+		return USER_USERDETAIL_FTL;
 	}
 
 	@RequestMapping(value = "/{userCode}", method = { RequestMethod.PUT, RequestMethod.POST })
@@ -62,14 +66,14 @@ public class UserController {
 		log.debug("Save user: {}", userCode);
 		if (bResult.hasErrors()) {
 			refData(model);
-			return new ModelAndView("/auth/user/userdetail.ftl");
+			return new ModelAndView(USER_USERDETAIL_FTL);
 		}
 		GsonView vw = new GsonView();
 		if ("POST".equalsIgnoreCase(request.getMethod())) {
-			userService.saveUser(theUser);
+			authService.saveUser(theUser);
 			vw.addAttribute("url", theUser.getCode() + ".htm");
 		} else {
-			userService.updateUser(theUser);
+			authService.updateUser(theUser);
 		}
 		vw.addAttribute("message", messageSource.getMessage("auth.user.savedOK", new Object[] { theUser.getCode() }, null));
 
@@ -82,7 +86,7 @@ public class UserController {
 			userStatesMap.put(sts.name(), messageSource.getMessage(UserState.class.getName() + "." + sts.name(), null, null));
 		}
 		model.addAttribute("UserStates", userStatesMap);
-		List<Role> roles = userService.getAllRoles();
+		List<Role> roles = authService.getAllRoles();
 		Map<String, String> rolesMap = new TreeMap<String, String>();
 		for (Role role : roles) {
 			rolesMap.put(role.getCode(), role.getName());

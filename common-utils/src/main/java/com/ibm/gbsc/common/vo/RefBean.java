@@ -26,6 +26,23 @@ public class RefBean implements BaseVO {
 	private String name;
 
 	/**
+	 *
+	 */
+	public RefBean() {
+		super();
+	}
+
+	/**
+	 * @param code
+	 * @param name
+	 */
+	public RefBean(String code, String name) {
+		super();
+		this.code = code;
+		this.name = name;
+	}
+
+	/**
 	 * @return the code
 	 */
 	@Id
@@ -58,7 +75,7 @@ public class RefBean implements BaseVO {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -72,7 +89,7 @@ public class RefBean implements BaseVO {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -99,7 +116,7 @@ public class RefBean implements BaseVO {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.ibm.gbsc.common.vo.BaseVO#getId()
 	 */
 	@Override
@@ -110,7 +127,7 @@ public class RefBean implements BaseVO {
 
 	/*
 	 * 本方法还用于与code比较，以用于判断是否同一个code项，所以不要改写
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

@@ -23,7 +23,7 @@ import com.ibm.gbsc.common.vo.PagedQueryResult;
  * @param <E>
  * @param <P>
  */
-public abstract class SearchListBaseController<E, P extends PagedQueryParam> extends BaseController {
+public abstract class PagedSearchListController<E, P extends PagedQueryParam> extends BaseController {
 
 	private static final int[] DEFAULT_PAGE_SIZE_OPTIONS = new int[] { 10, 20, 50, 100 };
 	/**
