@@ -126,4 +126,10 @@ public interface AuthService {
 	 */
 	List<Function> getFunctionsByRole(Role role);
 
+	/**
+	 * @param role
+	 * @param funcs
+	 */
+	void saveRoleFunctions(Role role, Collection<Function> funcs);
+
 }

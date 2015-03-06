@@ -3,7 +3,6 @@
  */
 package com.ibm.gbsc.auth.web;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,8 +26,9 @@ import com.ibm.gbsc.auth.model.Organization;
 import com.ibm.gbsc.auth.model.Role;
 import com.ibm.gbsc.auth.service.AuthService;
 import com.ibm.gbsc.gson.ZtreeNodeFieldNamingStrategy;
-import com.ibm.gbsc.web.model.TreeNode;
 import com.ibm.gbsc.web.springmvc.view.GsonView;
+import com.ibm.gbsc.web.tree.TreeNode;
+import com.ibm.gbsc.web.tree.TreeUtil;
 
 /**
  * @author fanjingxuan
@@ -56,27 +56,16 @@ public class OrgController {
 		List<Organization> orgList = authService.getOrgTreeByLevel(1);
 		GsonBuilder gb = new GsonBuilder();
 		gb.setFieldNamingStrategy(new ZtreeNodeFieldNamingStrategy());
-		model.addAttribute("orgTreeJson", gb.create().toJson(toTreeNodes(orgList)));
+		TreeUtil.TreeNodePropertySetter<Organization> orgNodePropSetter = new TreeUtil.TreeNodePropertySetter<Organization>() {
+			@Override
+			public void setTreeNodeProperty(TreeNode node, Organization org) {
+				node.setCss(org.isVirtual() ? "virtualOrg" : "organization");
+			}
+		};
+		List<TreeNode> treeNodes = TreeUtil.toTreeNodes(orgList, null, orgNodePropSetter);
+		model.addAttribute("orgTreeJson", gb.create().toJson(treeNodes));
 		model.addAttribute("orgList", orgList);
 		return "/auth/orgTree.ftl";
-	}
-
-	private List<TreeNode> toTreeNodes(List<Organization> orgs) {
-		ArrayList<TreeNode> nodes = new ArrayList<TreeNode>(orgs.size());
-		for (Organization org : orgs) {
-			TreeNode node = new TreeNode();
-			nodes.add(node);
-			node.setId(org.getCode());
-			node.setName(org.getName());
-			node.setCss(org.isVirtual() ? "virtualOrg" : "organization");
-			node.setOpen(true);
-			// node.setUrl("orgs/" + org.getCode() + "/roles");
-			// node.setOnclick("return openOrgRoles('" + org.getCode() + "');");
-			if (!(org.getChildren() == null || org.getChildren().isEmpty())) {
-				node.setChildren(toTreeNodes(org.getChildren()));
-			}
-		}
-		return nodes;
 	}
 
 	@RequestMapping(value = "/{orgCode}/roles", method = RequestMethod.GET)

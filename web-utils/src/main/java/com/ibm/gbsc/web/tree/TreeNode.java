@@ -3,7 +3,7 @@
  * Copyright (c) 2014 All Rights Reserved.
  */
 
-package com.ibm.gbsc.web.model;
+package com.ibm.gbsc.web.tree;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -23,7 +23,11 @@ public class TreeNode implements Serializable {
 	/**
 	 * 非叶子节点缺省是否打开
 	 */
-	private boolean open;
+	private Boolean open;
+	/**
+	 * 当树有复选框时，这个标记是否选中
+	 */
+	private Boolean checked;
 	/**
 	 * 节点的css class name
 	 */
@@ -76,21 +80,6 @@ public class TreeNode implements Serializable {
 	}
 
 	/**
-	 * @return the open
-	 */
-	public boolean isOpen() {
-		return open;
-	}
-
-	/**
-	 * @param open
-	 *            the open to set
-	 */
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
-
-	/**
 	 * @return the css
 	 */
 	public String getCss() {
@@ -103,6 +92,36 @@ public class TreeNode implements Serializable {
 	 */
 	public void setCss(String css) {
 		this.css = css;
+	}
+
+	/**
+	 * @return the open
+	 */
+	public Boolean getOpen() {
+		return open;
+	}
+
+	/**
+	 * @param open
+	 *            the open to set
+	 */
+	public void setOpen(Boolean open) {
+		this.open = open;
+	}
+
+	/**
+	 * @return the checked
+	 */
+	public Boolean getChecked() {
+		return checked;
+	}
+
+	/**
+	 * @param checked
+	 *            the checked to set
+	 */
+	public void setChecked(Boolean checked) {
+		this.checked = checked;
 	}
 
 }

@@ -12,7 +12,7 @@
 <@fmt.setBundle basename="i18n/auth-messages" />
 <script type="text/javascript">
 	function openRoleResource(roleCode){
-		var orUrl = "roles/"+roleCode + ".htm";
+		var orUrl = "roles/"+roleCode + "/functions.htm";
 		openContentWindow(orUrl, "roleResource");
 		return false;
 	}
@@ -21,6 +21,14 @@
 		$(".openRoleResource").click(function(){
 			openRoleResource($(this).parent().children(".rolecode").text());
 		});
+		$('#tRole tbody').on( 'click', 'tr', function () {
+	        if ( $(this).hasClass('selected') ) {
+				$(this).removeClass('selected');
+	        } else {
+				$('#tRole tr.selected').removeClass('selected');
+				$(this).addClass('selected');
+	        }
+		});
 	});
 </script>
 </head>
@@ -28,7 +36,7 @@
 
 <table>
 <tr><td>
-<@disp.table uid="tRole" list=roles excludedParams="*" export=false class="resultTable" form="searchListForm" >
+<@disp.table uid="tRole" list=roles excludedParams="*" export=false class="resultTable">
 	<@disp.caption>角色列表</@disp.caption>
 	<@disp.column title="角色代码" property="code" class="center openRoleResource rolecode"/>
 	<@disp.column title="角色名称" property="name" class="center openRoleResource"/>

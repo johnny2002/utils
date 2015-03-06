@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 
+import com.ibm.gbsc.common.vo.IRefBeanTree;
 import com.ibm.gbsc.common.vo.RefBean;
 
 /**
@@ -30,7 +31,7 @@ import com.ibm.gbsc.common.vo.RefBean;
 @NamedQueries({
         @NamedQuery(name = "Organization.getByLevel", query = "select o from Organization o where o.level = :level order by o.code", hints = { @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
         @NamedQuery(name = "Organization.getByLevelType", query = "select o from Organization o where o.level = :level and o.type = :type order by o.code", hints = { @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
-public class Organization extends RefBean {
+public class Organization extends RefBean implements IRefBeanTree {
 	/**
 	 *
 	 */

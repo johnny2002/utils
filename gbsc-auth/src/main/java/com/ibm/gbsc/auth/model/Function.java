@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import com.ibm.gbsc.common.vo.IRefBeanTree;
 import com.ibm.gbsc.common.vo.RefBean;
 
 /**
@@ -32,7 +33,7 @@ import com.ibm.gbsc.common.vo.RefBean;
         @NamedQuery(name = "Function.getTOP", query = "select func from Function func where func.top = true and func.active = true order by func.seq"),
         @NamedQuery(name = "Function.getMenu", query = "select func from Function func where func.menu = true and func.parent is null and func.active = true order by func.seq") })
 @Cacheable
-public class Function extends RefBean {
+public class Function extends RefBean implements IRefBeanTree {
 	/**
 	 *
 	 */
@@ -44,7 +45,7 @@ public class Function extends RefBean {
 	/**
 	 * 是否顶部tab
 	 */
-	private boolean top;
+	private Boolean top;
 	/**
 	 * 功能URL，主要用于菜单
 	 */
@@ -130,6 +131,7 @@ public class Function extends RefBean {
 	/**
 	 * @return the children
 	 */
+	@Override
 	@OneToMany(mappedBy = "parent")
 	@OrderBy("seq")
 	public List<Function> getChildren() {

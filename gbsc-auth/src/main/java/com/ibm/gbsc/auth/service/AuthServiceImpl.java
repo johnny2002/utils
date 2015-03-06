@@ -187,7 +187,7 @@ public class AuthServiceImpl implements AuthService {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * com.ibm.gbsc.auth.user.UserService#saveUser(com.ibm.gbsc.auth.user.User)
 	 */
@@ -199,7 +199,7 @@ public class AuthServiceImpl implements AuthService {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * com.ibm.gbsc.auth.user.UserService#saveOrganzation(com.ibm.gbsc.auth.
 	 * user.Organization)
@@ -262,7 +262,9 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public List<Function> getFunctionsByRole(Role role) {
-		List<Function> funcs = em.createNamedQuery("Function.byRole", Function.class).setParameter("role", role).getResultList();
+
+		TypedQuery<Function> query = em.createNamedQuery("Function.byRole", Function.class).setParameter("role", role);
+		List<Function> funcs = dao.executeReadonlyQuery(query);
 		return funcs;
 	}
 
@@ -280,6 +282,32 @@ public class AuthServiceImpl implements AuthService {
 					initSubFuncs(menu.getChildren(), recursive);
 				}
 			}
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ibm.gbsc.auth.service.AuthService#saveRoleFunctions(com.ibm.gbsc.
+	 * auth.model.Role, java.util.List)
+	 */
+	@Override
+	@Transactional(readOnly = false)
+	public void saveRoleFunctions(Role role, Collection<Function> funcs) {
+		// 保存Role关联的Function变动情况
+		List<Function> oFuncs = em.createNamedQuery("Function.byRole", Function.class).setParameter("role", role).getResultList();
+		for (Function oFunc : oFuncs) {
+			if (funcs.remove(oFunc)) {
+				log.debug("{} function no need to change.", oFunc.getName());
+			} else {
+				oFunc.getRoles().remove(role);
+			}
+		}
+		for (Function func : funcs) {
+			Function oldFunc = em.find(Function.class, func.getCode());
+			oldFunc.getRoles().add(role);
 		}
 
 	}
